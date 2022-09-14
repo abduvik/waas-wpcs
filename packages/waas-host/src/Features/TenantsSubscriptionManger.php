@@ -35,6 +35,8 @@ class TenantsSubscriptionManger
         $domain_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_DOMAIN_NAME_META, true));
         $password = wp_generate_password();
 
+        $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
+
         $args = [
             'name' => $website_name,
             'wordpress_username' => str_replace('-', '_', sanitize_title_with_dashes(remove_accents($order->get_formatted_billing_full_name()))),
@@ -45,9 +47,13 @@ class TenantsSubscriptionManger
 
         if ($domain_name !== '') {
             $args['custom_domain_name'] = $domain_name;
+        } else if($tenant_root_domain !== ''){
+            $subdomain = sanitize_title_with_dashes(remove_accents($website_name));
+            $args['custom_domain_name'] = $subdomain . '.' .$tenant_root_domain;
         }
 
         $new_tenant = $this->wpcsService->create_tenant($args);
+
         $keys = $this->encryptionService->generate_key_pair();
 
         update_post_meta($subscription->get_id(), WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, $new_tenant->externalId);

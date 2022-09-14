@@ -82,6 +82,27 @@ class AdminWpcsSettings
             ]
         );
 
+        add_settings_section(
+            'wpcs_host_settings',
+            'WPCS Host Settings',
+            fn() => "<p>Intro text for our settings section</p>",
+            'wpcs-admin'
+        );
+
+        register_setting('wpcs-admin', 'wpcs_host_settings_root_domain');
+        add_settings_field(
+            'wpcs_host_settings_root_domain',
+            'Tenants Root Domain',
+            [$this, 'render_settings_field'],
+            'wpcs-admin',
+            'wpcs_host_settings',
+            [
+                "id" => "wpcs_host_settings_root_domain",
+                "title" => "Tenants Root Domain",
+                "type" => "text"
+            ]
+        );
+
 
     }
 
