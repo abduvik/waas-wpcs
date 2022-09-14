@@ -1,0 +1,58 @@
+version: "3.7"
+
+services:
+  wordpress-host:
+    image: wordpress:6.0.0-php8.0
+    restart: always
+    ports:
+      - "3000:80"
+    environment:
+      WORDPRESS_DB_HOST: db-host
+      WORDPRESS_DB_USER: wp_db_user
+      WORDPRESS_DB_PASSWORD: wp_db_pass
+      WORDPRESS_DB_NAME: wp_db
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - ./dist/host/plugins:/var/www/html/wp-content/plugins
+      - ./dist/host/themes:/var/www/html/wp-content/themes
+      - ./packages/monday-host:/var/www/html/wp-content/plugins/monday-host
+
+  wordpress-client:
+    image: wordpress:6.0.0-php8.0
+    restart: always
+    ports:
+      - "4000:80"
+    environment:
+      WORDPRESS_DB_HOST: db-client
+      WORDPRESS_DB_USER: wp_db_user
+      WORDPRESS_DB_PASSWORD: wp_db_pass
+      WORDPRESS_DB_NAME: wp_db
+      WORDPRESS_DEBUG: 1
+    volumes:
+      - ./dist/client/plugins:/var/www/html/wp-content/plugins
+      - ./dist/client/themes:/var/www/html/wp-content/themes
+      - ./packages/monday-client:/var/www/html/wp-content/plugins/monday-client
+
+  db-host:
+    image: mysql:5.7
+    platform: linux/amd64
+    restart: always
+    environment:
+      MYSQL_DATABASE: wp_db
+      MYSQL_USER: wp_db_user
+      MYSQL_PASSWORD: wp_db_pass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./dist/host/.db:/var/lib/mysql
+
+  db-client:
+    image: mysql:5.7
+    platform: linux/amd64
+    restart: always
+    environment:
+      MYSQL_DATABASE: wp_db
+      MYSQL_USER: wp_db_user
+      MYSQL_PASSWORD: wp_db_pass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - ./dist/client/.db:/var/lib/mysql

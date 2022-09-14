@@ -1,0 +1,1 @@
+sudo echo "* * * * * root curl http://localhost/wp-cron.php" > /etc/cron.d/wpcron
