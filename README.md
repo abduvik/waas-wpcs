@@ -1,7 +1,16 @@
-# Monday.com SaaS Clone using WordPress, WooCommerce, WPCS & k8s
+# WaaS Host & Client Plugins
 
-This is a Monday.com Clone build using various technologies to illustrate how easy it is to build SaaS products using
-WordPress
+Two plugins used to create a communication between a host and multiple tenants in a multi-tenant WordPress setup.
+
+## Features
+
+- Tenant Creation
+- Subscription Management
+- Role-based Plugins Activation
+- Adding new Add-ons
+- Changing Domains
+- Tenants domains
+- Single-Sign On
 
 ## [YouTube Video](http://www.youtube.com/watch?v=hqpPOjLvIig)
 

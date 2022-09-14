@@ -1,7 +1,7 @@
 dist
 build
 .db
-packages/monday-client/data/roles.json
+packages/waas-client/data/roles.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/phpstorm,wordpress
 # Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,wordpress

@@ -15,7 +15,7 @@ services:
     volumes:
       - ./dist/host/plugins:/var/www/html/wp-content/plugins
       - ./dist/host/themes:/var/www/html/wp-content/themes
-      - ./packages/monday-host:/var/www/html/wp-content/plugins/monday-host
+      - ./packages/waas-host:/var/www/html/wp-content/plugins/waas-host
 
   wordpress-client:
     image: wordpress:6.0.0-php8.0
@@ -31,7 +31,7 @@ services:
     volumes:
       - ./dist/client/plugins:/var/www/html/wp-content/plugins
       - ./dist/client/themes:/var/www/html/wp-content/themes
-      - ./packages/monday-client:/var/www/html/wp-content/plugins/monday-client
+      - ./packages/waas-client:/var/www/html/wp-content/plugins/waas-client
 
   db-host:
     image: mysql:5.7
