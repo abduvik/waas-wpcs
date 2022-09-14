@@ -9,6 +9,7 @@ Two plugins used to create a communication between a host and multiple tenants i
 - Role-based Plugins Activation
 - Adding new Add-ons
 - Changing Domains
+- Root-Domain for created tenants
 - Tenants domains
 - Single-Sign On
 
