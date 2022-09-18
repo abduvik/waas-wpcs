@@ -32,10 +32,8 @@ class TenantsSubscriptionManger
         $product = reset($order_items);
         $product_role = get_post_meta($product->get_product_id(), WPCSTenant::WPCS_PRODUCT_ROLE_META, true);
         $website_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_WEBSITE_NAME_META, true));
-        $domain_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_DOMAIN_NAME_META, true));
         $password = wp_generate_password();
 
-        $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
 
         $args = [
             'name' => $website_name,
@@ -45,9 +43,8 @@ class TenantsSubscriptionManger
             'wordpress_user_role' => 'administrator',
         ];
 
-        if ($domain_name !== '') {
-            $args['custom_domain_name'] = $domain_name;
-        } else if($tenant_root_domain !== ''){
+        $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
+        if($tenant_root_domain !== ''){
             $subdomain = sanitize_title_with_dashes(remove_accents($website_name));
             $args['custom_domain_name'] = $subdomain . '.' .$tenant_root_domain;
         }
@@ -55,6 +52,7 @@ class TenantsSubscriptionManger
         $new_tenant = $this->wpcsService->create_tenant($args);
 
         $keys = $this->encryptionService->generate_key_pair();
+        $domain_name = $new_tenant->customDomain ?? $new_tenant->baseDomain;
 
         update_post_meta($subscription->get_id(), WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, $new_tenant->externalId);
         update_post_meta($subscription->get_id(), WPCSTenant::WPCS_TENANT_PUBLIC_KEY_META, $keys['public_key']);
@@ -66,7 +64,7 @@ class TenantsSubscriptionManger
         $this->send_created_email([
             'email' => $order->get_billing_email(),
             'password' => $password,
-            'domain' => $domain_name !== '' ? $domain_name : $new_tenant->baseDomain
+            'domain' => $domain_name
         ]);
     }
 

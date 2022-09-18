@@ -20,19 +20,11 @@ class UserWcTenantsCheckout
             'priority' => 20,
         ];
 
-        $fields['billing'][WPCSTenant::WPCS_DOMAIN_NAME_META] = [
-            'label' => 'Domain Name',
-            'required' => false,
-            'priority' => 21,
-            'placeholder' => 'example.com'
-        ];
-
         return $fields;
     }
 
     function add_wpcs_checkout_fields($order_id)
     {
         update_post_meta($order_id, WPCSTenant::WPCS_WEBSITE_NAME_META, sanitize_text_field($_POST[WPCSTenant::WPCS_WEBSITE_NAME_META]));
-        update_post_meta($order_id, WPCSTenant::WPCS_DOMAIN_NAME_META, sanitize_text_field($_POST[WPCSTenant::WPCS_DOMAIN_NAME_META]));
     }
 }
