@@ -46,8 +46,22 @@ class UserAccountSubscriptionsSettings
 	            </p>
 	            <button class='button' type='submit'>Update</button>
 	           </form><br /><br />";
+
+        $api_region = get_option('wpcs_credentials_region_setting');
         echo '<p>Before verifying a domain, make sure that its DNS contains the following settings.</p>
-              <p>For the domain apex add A records with the following IPs as their values:</p>
+              <p>For the domain apex add A records with the following IPs as their values:</p>';
+
+        if($api_region == 'us'){
+            echo '
+<pre>
+54.166.55.112
+54.163.0.37
+174.129.101.20
+</pre>
+              <p>If you are verifying a subdomain, create a CNAME record with the value:</p>
+              <pre>public.us1.wpcs.io</pre>';
+        } elseif($api_region == 'eu') {
+            echo '
 <pre>
 54.74.209.56
 54.75.81.37
@@ -55,6 +69,10 @@ class UserAccountSubscriptionsSettings
 </pre>
               <p>If you are verifying a subdomain, create a CNAME record with the value:</p>
               <pre>public.eu1.wpcs.io</pre>';
+        } else {
+            echo 'The region is currently not setup correctly.';
+        }
+
         echo '<h4>Website Status</h4>';
     }
 
