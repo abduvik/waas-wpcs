@@ -51,7 +51,7 @@ class UserAccountSubscriptionsSettings
         echo '<p>Before verifying a domain, make sure that its DNS contains the following settings.</p>
               <p>For the domain apex add A records with the following IPs as their values:</p>';
 
-        if($api_region == 'us'){
+        if($api_region == 'us1'){
             echo '
 <pre>
 54.166.55.112
@@ -60,7 +60,7 @@ class UserAccountSubscriptionsSettings
 </pre>
               <p>If you are verifying a subdomain, create a CNAME record with the value:</p>
               <pre>public.us1.wpcs.io</pre>';
-        } elseif($api_region == 'eu') {
+        } elseif($api_region == 'eu1') {
             echo '
 <pre>
 54.74.209.56
