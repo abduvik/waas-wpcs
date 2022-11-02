@@ -8,7 +8,7 @@ Plugin Name: WaaS Client
 Plugin URI: https://github.com/abduvik/wpcs-waas
 Description: This plugin is used to handle secure communication between tenant on WPCS and Storefront.
 Author: Abdu Tawfik
-Version: 1.0.0
+Version: 1.0.2
 Author URI: https://www.abdu.dev
 */
 
@@ -33,15 +33,16 @@ define('WAAS_HOST_PUBLIC_KEYS', get_option('tenant_public_key'));
 $host_http_service = new HttpService(WAAS_MAIN_HOST_URL . '/wp-json/waas-host/v1');
 $decryptionService = new DecryptionService();
 
+// Managers to list for Events
+$secureHostConnectionManager = new SecureHostConnectionManager($host_http_service);
+new RolesManager();
+
 // Plugin Boostrap
 new PluginBootstrap($host_http_service);
 
-new SingleSignOnController($decryptionService);
+new SingleSignOnController($decryptionService, $secureHostConnectionManager);
 new RolesController($host_http_service);
 
-// Managers to list for Events
-new SecureHostConnectionManager($host_http_service);
-new RolesManager();
 
 // UI
 new AdminTenantSettings();

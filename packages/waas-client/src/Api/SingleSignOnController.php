@@ -3,6 +3,7 @@
 namespace WaaSClient\Api;
 
 use WaaSClient\Core\DecryptionService;
+use WaaSClient\Features\SecureHostConnectionManager;
 use WaaSClient\Features\PluginBootstrap;
 use WP_Error;
 use WP_REST_Request;
@@ -10,10 +11,12 @@ use WP_REST_Request;
 class SingleSignOnController
 {
     private DecryptionService $decryptionService;
+    private SecureHostConnectionManager $secureHostConnectionManager;
 
-    public function __construct(DecryptionService $decryptionService)
+    public function __construct(DecryptionService $decryptionService, SecureHostConnectionManager $secureHostConnectionManager)
     {
         $this->decryptionService = $decryptionService;
+        $this->secureHostConnectionManager = $secureHostConnectionManager;
 
         add_action('rest_api_init', [$this, 'register_rest_routes']);
     }
@@ -31,6 +34,13 @@ class SingleSignOnController
         $token_encoded = urlencode($request->get_param('token'));
         $token_decoded = base64_decode(urldecode($token_encoded));
         $public_key = WAAS_HOST_PUBLIC_KEYS;
+
+        if(empty($public_key)) {
+            $externalId = get_option(PluginBootstrap::EXTERNAL_ID);
+            $this->secureHostConnectionManager->get_tenant_public_id($externalId);
+            $public_key = get_option(SecureHostConnectionManager::TENANT_PUBLIC_KEY);
+        }
+
         $data = $this->decryptionService->decrypt($public_key, $token_decoded);
 
         if (!$data) {
@@ -39,7 +49,7 @@ class SingleSignOnController
 
         $data = json_decode($data);
         $user_email = $data->email;
-        $user = get_user_by_email($user_email);
+        $user = get_user_by('email', $user_email);
 
         if (!$user) {
             return new WP_Error('User not found');
