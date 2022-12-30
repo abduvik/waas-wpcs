@@ -30,7 +30,8 @@ class WPCSTenant
         global $wpdb;
 
         $tbl = $wpdb->prefix . 'postmeta';
-        $prepare_guery = $wpdb->prepare("SELECT post_id FROM $tbl where meta_key ='" . static::WPCS_TENANT_EXTERNAL_ID_META . "' and meta_value = '%s'", $wpcs_external_id);
+        $tbl2 = $wpdb->prefix . 'posts';
+        $prepare_guery = $wpdb->prepare("SELECT post_id FROM $tbl m INNER JOIN $tbl2 p ON m.post_id = p.id WHERE p.post_type = 'shop_subscription' AND m.meta_key ='" . static::WPCS_TENANT_EXTERNAL_ID_META . "' AND m.meta_value = '%s'", $wpcs_external_id);
         $get_values = $wpdb->get_col($prepare_guery);
 
         // check results ##

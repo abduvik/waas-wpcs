@@ -75,7 +75,7 @@ class TenantsSubscriptionManger
         <html lang='en'>
         <body>
             <p>Hello,</p>
-            <p>You can now login here to your new website</p>
+            <p>You can login to your website in a few minutes. Use the info below to login. Don't forget to reset your password!</p>
             <p><strong>Admin Url</strong>: <a href='https://{$args['domain']}/wp-admin'>https://{$args['domain']}/wp-admin</a></p>
             <p><strong>Email</strong> : {$args['email']}</p>
             <p><strong>Password</strong> : {$args['password']}</p>

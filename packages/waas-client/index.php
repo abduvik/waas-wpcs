@@ -22,28 +22,30 @@ use WaaSClient\Features\RolesManager;
 use WaaSClient\Features\SecureHostConnectionManager;
 use WaaSClient\Features\AdminTenantSettings;
 
+if (!wp_doing_ajax()) {
+    define("WAAS_PLUGIN_DIR_URI", plugin_dir_url(__FILE__));
+    define("WAAS_PLUGIN_DIR", plugin_dir_path(__FILE__));
 
-define("WAAS_PLUGIN_DIR_URI", plugin_dir_url(__FILE__));
-define("WAAS_PLUGIN_DIR", plugin_dir_path(__FILE__));
+    define('WAAS_MAIN_HOST_URL', get_option('waas_host_website_url'));
+    define('WAAS_HOST_PUBLIC_KEYS', get_option('tenant_public_key'));
 
-define('WAAS_MAIN_HOST_URL', get_option('waas_host_website_url'));
-define('WAAS_HOST_PUBLIC_KEYS', get_option('tenant_public_key'));
+    // Controllers to list for APIs
+    $host_http_service = new HttpService(WAAS_MAIN_HOST_URL . '/wp-json/waas-host/v1');
+    $decryptionService = new DecryptionService();
 
-// Controllers to list for APIs
-$host_http_service = new HttpService(WAAS_MAIN_HOST_URL . '/wp-json/waas-host/v1');
-$decryptionService = new DecryptionService();
+    // Managers to list for Events
+    $secureHostConnectionManager = new SecureHostConnectionManager($host_http_service);
+    new RolesManager();
 
-// Managers to list for Events
-$secureHostConnectionManager = new SecureHostConnectionManager($host_http_service);
-new RolesManager();
+    // Plugin Boostrap
+    new PluginBootstrap($host_http_service);
 
-// Plugin Boostrap
-new PluginBootstrap($host_http_service);
+    new SingleSignOnController($decryptionService, $secureHostConnectionManager);
+    new RolesController($host_http_service);
 
-new SingleSignOnController($decryptionService, $secureHostConnectionManager);
-new RolesController($host_http_service);
-
-
-// UI
-new AdminTenantSettings();
-new AdminRolesSettings($host_http_service);
+    if (getenv("WPCS_IS_TENANT") === 'true') {
+        new AdminTenantSettings();
+    } else {
+        new AdminRolesSettings($host_http_service);
+    }
+}

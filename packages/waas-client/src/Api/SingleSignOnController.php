@@ -35,16 +35,20 @@ class SingleSignOnController
         $token_decoded = base64_decode(urldecode($token_encoded));
         $public_key = WAAS_HOST_PUBLIC_KEYS;
 
-        if(empty($public_key)) {
+        if (empty($public_key) || strpos($public_key, '-----BEGIN PUBLIC KEY-----') !== 0) {
             $externalId = get_option(PluginBootstrap::EXTERNAL_ID);
             $this->secureHostConnectionManager->get_tenant_public_id($externalId);
             $public_key = get_option(SecureHostConnectionManager::TENANT_PUBLIC_KEY);
+
+            if (empty($public_key) || strpos($public_key, '-----BEGIN PUBLIC KEY-----') !== 0) {
+                return new WP_Error('Could not fetch Correct Public key from Storefront');
+            }
         }
 
         $data = $this->decryptionService->decrypt($public_key, $token_decoded);
 
         if (!$data) {
-            return new WP_Error('Critical Failure');
+            return new WP_Error('Decryption failed');
         }
 
         $data = json_decode($data);

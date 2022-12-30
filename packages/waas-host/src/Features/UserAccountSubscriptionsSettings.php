@@ -25,7 +25,7 @@ class UserAccountSubscriptionsSettings
     {
         $order = $subscription->get_parent();
         $email = $order->get_billing_email();
-        $loginLink = '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription->get_id() . '&email=' . $email;
+        $loginLink = '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription->get_id() . '&email=' . urlencode($email);
 
         echo "<a href='$loginLink' target='_blank' class='button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
     }

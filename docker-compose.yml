@@ -5,7 +5,7 @@ services:
     image: wordpress:6.0.0-php8.0
     restart: always
     ports:
-      - "3000:80"
+      - "3001:80"
     environment:
       WORDPRESS_DB_HOST: db-host
       WORDPRESS_DB_USER: wp_db_user
@@ -21,7 +21,7 @@ services:
     image: wordpress:6.0.0-php8.0
     restart: always
     ports:
-      - "4000:80"
+      - "4001:80"
     environment:
       WORDPRESS_DB_HOST: db-client
       WORDPRESS_DB_USER: wp_db_user

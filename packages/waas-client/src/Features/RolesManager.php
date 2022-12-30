@@ -11,9 +11,7 @@ class RolesManager
 
     public function activate_enabled_plugins(): void
     {
-        $external_id = get_option(PluginBootstrap::EXTERNAL_ID, '');
-
-        if ($external_id === '' || !file_exists(AdminRolesSettings::ROLES_FILE_PATH)) {
+        if (!file_exists(AdminRolesSettings::ROLES_FILE_PATH) || getenv('WPCS_IS_TENANT') !== 'true') {
             // This is a WPCS version and not a tenant or plugin not yet setup
             return;
         }
@@ -31,9 +29,10 @@ class RolesManager
         $enabled_plugins = array_unique($enabled_plugins);
         $disabled_plugins = array_diff($all_plugins, $enabled_plugins);
 
-        activate_plugins($enabled_plugins);
+        $plugins_requiring_enabling = array_values(array_filter($enabled_plugins, fn ($plugin) => !is_plugin_active($plugin)));
+        activate_plugins($plugins_requiring_enabling);
 
-        $disabled_plugins = array_filter($disabled_plugins, fn($item) => $item !== PluginBootstrap::PLUGIN_NAME);
+        $disabled_plugins = array_filter($disabled_plugins, fn ($item) => $item !== PluginBootstrap::PLUGIN_NAME && is_plugin_active($item));
         deactivate_plugins($disabled_plugins);
     }
 }
