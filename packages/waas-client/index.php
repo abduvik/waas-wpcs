@@ -5,11 +5,11 @@ require_once(ABSPATH . '/wp-admin/includes/plugin.php');
 
 /*
 Plugin Name: WaaS Client
-Plugin URI: https://github.com/abduvik/wpcs-waas
-Description: This plugin is used to handle secure communication between tenant on WPCS and Storefront.
-Author: Abdu Tawfik
-Version: 1.0.2
-Author URI: https://www.abdu.dev
+Plugin URI: https://github.com/Daxez/waas-wpcs
+Description: This plugin is used to handle secure communication between tenant on WPCS and Storefront. Forked from https://github.com/abduvik/wpcs-waas
+Author: WPCS
+Version: 1.2.0
+Author URI: https://wpcs.io
 */
 
 use WaaSClient\Api\RolesController;
@@ -43,9 +43,8 @@ if (!wp_doing_ajax()) {
     new SingleSignOnController($decryptionService, $secureHostConnectionManager);
     new RolesController($host_http_service);
 
-    if (getenv("WPCS_IS_TENANT") === 'true') {
+    if (getenv("WPCS_IS_TENANT") !== 'true') {
         new AdminTenantSettings();
-    } else {
         new AdminRolesSettings($host_http_service);
     }
 }

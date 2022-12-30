@@ -18,15 +18,15 @@ require_once 'vendor/autoload.php';
 
 /**
  * @package WaaSHost
- * @version 1.0.2
+ * @version 1.2.0
  */
 /*
 Plugin Name: WaaS Host
-Plugin URI: https://github.com/abduvik/wpcs-waas
-Description: This plugin is used to create tenants on WPCS.io with support of WordPress, WooCommerce, WooCommerce Subscriptions and Self-service Dashboard for WooCommerce Subscriptions
-Author: Abdu Tawfik
-Version: 1.0.2
-Author URI: https://www.abdu.dev
+Plugin URI: https://github.com/Daxez/waas-wpcs
+Description: This plugin is used to create tenants on WPCS.io with support of WordPress, WooCommerce, WooCommerce Subscriptions and Self-service Dashboard for WooCommerce Subscriptions. Forked from https://github.com/abduvik/wpcs-waas
+Author: WPCS
+Version: 1.2.0
+Author URI: https://wpcs.io
 */
 
 define('WPCS_API_REGION', get_option('wpcs_credentials_region_setting')); // Or eu1, depending on your region.

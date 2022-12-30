@@ -55,6 +55,14 @@ class AdminRolesSettings
 
         $roles = json_decode(file_get_contents(self::ROLES_FILE_PATH), true);
 
+        $user_info = wp_get_current_user();
+        $validation_errors = get_transient('add_role_validation_error' . $user_info->ID);
+        if ($validation_errors !== FALSE) {
+            delete_transient('add_role_validation_error' . $user_info->ID);
+            echo '<div class="errors">Please fix the following Validation Errors:<ul><li>' . implode('</li><li>', $validation_errors) . '</li></ul></div>';
+        }
+
+
 ?>
         <h1>Roles</h1>
 
@@ -117,6 +125,15 @@ class AdminRolesSettings
         $data = json_decode(file_get_contents(self::ROLES_FILE_PATH), true);
 
         $new_role_name = sanitize_text_field($_POST['role']);
+
+        if (strlen($new_role_name) === 0) {
+            // Add Error
+            $user_info = wp_get_current_user();
+            set_transient('add_role_validation_error' . $user_info->ID, ["<div class=\"error\">Cannot add a role without a name</div>"]);
+            wp_redirect(wp_get_referer());
+            die();
+        }
+
         $role_slug = sanitize_title_with_dashes($new_role_name);
         $data[$role_slug] = [
             'title' => $new_role_name,
@@ -166,6 +183,7 @@ class AdminRolesSettings
             $filtered_activated_plugins_files = array_filter($activated_plugins_files, function ($plugin_file) {
                 return file_exists(WP_PLUGIN_DIR . '/' . $plugin_file);
             });
+
             $data[$role_slug] = [
                 'title' => $data[$role_slug]['title'],
                 'plugins' => $filtered_activated_plugins_files

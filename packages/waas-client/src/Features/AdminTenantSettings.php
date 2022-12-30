@@ -4,18 +4,16 @@ namespace WaaSClient\Features;
 
 class AdminTenantSettings
 {
+
     public function __construct()
     {
         add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 11);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
+        add_filter("pre_update_option_waas_host_website_url", fn ($val) => 'https://' . preg_replace("/^(http|https):\/\//i", "", $val));
     }
 
     public function add_wpcs_admin_page()
     {
-        if (get_option(PluginBootstrap::EXTERNAL_ID, '') !== '') {
-            return;
-        }
-        
         add_menu_page(
             'Tenant Settings',
             'Tenant Settings',
@@ -23,7 +21,8 @@ class AdminTenantSettings
             'wpcs-admin-tenant',
             [$this, 'render_wpcs_admin_tenant_page'],
             'dashicons-networking',
-            10);
+            10
+        );
     }
 
     public function render_wpcs_admin_tenant_page()
@@ -40,7 +39,7 @@ class AdminTenantSettings
         add_settings_section(
             'wpcs_admin_tenant_settings',
             'Host Website Settings',
-            fn() => "<p>Intro text for our settings section</p>",
+            fn () => "<p>Intro text for our settings section</p>",
             'wpcs-admin-tenant'
         );
 
@@ -64,6 +63,3 @@ class AdminTenantSettings
         echo "<input type='{$args["type"]}' id'{$args["id"]}' name='{$args["id"]}' value=" . get_option($args["id"]) . ">";
     }
 }
-
-
-
