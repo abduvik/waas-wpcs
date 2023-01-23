@@ -31,6 +31,18 @@ class HttpService
         return json_decode($response['body']);
     }
 
+    /**
+     * @throws Exception
+     */
+    public function getraw($uri)
+    {
+        $response = wp_remote_get($this->base_uri . $uri, [
+            'headers' => $this->get_api_header()
+        ]);
+
+        return $response;
+    }
+
     private function get_api_header(): array
     {
         if ($this->auth_keys === '') {

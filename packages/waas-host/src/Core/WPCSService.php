@@ -1,6 +1,9 @@
 <?php
 
 namespace WaaSHost\Core;
+use Exception;
+
+class InvalidDomainException extends Exception { }
 
 class WPCSService
 {
@@ -61,5 +64,19 @@ class WPCSService
     {
         $url = '/v1/tenants/domains?externalId=' . $args['external_id'] . "&domainName=" . $args['old_domain_name'];
         $this->httpService->delete($url);
+    }
+
+    public function domain_available($domain) {
+        $url = '/v1/tenants/domains/available?domain=' . $domain;
+        $response = $this->httpService->getraw($url);
+        if(is_wp_error($response)) {
+            throw new Exception("Something went wrong connecting to the API");
+        }
+
+        if(wp_remote_retrieve_response_code($response) == 400) {
+            throw new InvalidDomainException("Domain was not valid!");
+        }
+
+        return json_decode($response['body'])['available'];
     }
 }
