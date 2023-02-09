@@ -23,7 +23,7 @@ class UserWcTenantsCheckout
         $fields['billing'][WPCSTenant::WPCS_WEBSITE_NAME_META] = [
             'label' => 'Website Name',
             'required' => true,
-            'priority' => 20,
+            'priority' => 30,
         ];
 
         return $fields;

@@ -73,10 +73,11 @@ class WPCSService
             throw new Exception("Something went wrong connecting to the API");
         }
 
+
         if(wp_remote_retrieve_response_code($response) == 400) {
             throw new InvalidDomainException("Domain was not valid!");
         }
 
-        return json_decode($response['body'])['available'];
+        return json_decode($response['body'])->available;
     }
 }
