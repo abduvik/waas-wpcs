@@ -31,6 +31,7 @@ class TenantsSubscriptionManger
         $order_items = $order->get_items();
         $product = reset($order_items);
         $product_role = get_post_meta($product->get_product_id(), WPCSTenant::WPCS_PRODUCT_ROLE_META, true);
+        $group_name = get_post_meta($product->get_product_id(), WPCSTenant::WPCS_PRODUCT_GROUPNAME_META, true);
         $website_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_WEBSITE_NAME_META, true));
         $password = wp_generate_password();
 
@@ -41,12 +42,13 @@ class TenantsSubscriptionManger
             'wordpress_email' => $order->get_billing_email(),
             'wordpress_password' => $password,
             'wordpress_user_role' => 'administrator',
+            'group_name' => $group_name === false ? null : $group_name,
         ];
 
         $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
-        if($tenant_root_domain !== ''){
+        if ($tenant_root_domain !== '') {
             $subdomain = sanitize_title_with_dashes(remove_accents($website_name));
-            $args['custom_domain_name'] = $subdomain . '.' .$tenant_root_domain;
+            $args['custom_domain_name'] = $subdomain . '.' . $tenant_root_domain;
         }
 
         $new_tenant = $this->wpcsService->create_tenant($args);

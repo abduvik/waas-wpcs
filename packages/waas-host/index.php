@@ -18,14 +18,14 @@ require_once 'vendor/autoload.php';
 
 /**
  * @package WaaSHost
- * @version 1.3.1
+ * @version 1.4.0
  */
 /*
 Plugin Name: WaaS Host
 Plugin URI: https://github.com/Daxez/waas-wpcs
 Description: This plugin is used to create tenants on WPCS.io with support of WordPress, WooCommerce, WooCommerce Subscriptions and Self-service Dashboard for WooCommerce Subscriptions. Forked from https://github.com/abduvik/wpcs-waas
 Author: WPCS
-Version: 1.3.1
+Version: 1.4.0
 Author URI: https://wpcs.io
 */
 

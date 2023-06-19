@@ -22,6 +22,15 @@ class AdminWcProductRole
             'side',
             'high'
         );
+
+        add_meta_box(
+            'wpcs_product_groupname_selector',
+            'Snapshot mapper',
+            [$this, 'render_woocommerce_group_name_input'],
+            'product',
+            'side',
+            'high'
+        );
     }
 
     public function render_woocommerce_product_role_mapper_selector($post)
@@ -38,14 +47,35 @@ class AdminWcProductRole
         echo '</select>';
     }
 
+    public function render_woocommerce_group_name_input($post)
+    {
+        $group_name = get_post_meta($post->ID, WPCSTenant::WPCS_PRODUCT_GROUPNAME_META, true);
+        echo '<label for="' . WPCSTenant::WPCS_PRODUCT_GROUPNAME_META . '">Tenant Snapshot Groupname</label>';
+        echo "<input name='" . WPCSTenant::WPCS_PRODUCT_GROUPNAME_META . "' class='postbox' type='text' value='" . $group_name . "' />";
+    }
+
+
     public function save_woocommerce_wpcs_versions_selector($post_id)
     {
-        if (array_key_exists(WPCSTenant::WPCS_PRODUCT_ROLE_META, $_POST) && $_POST['post_type'] === 'product') {
-            update_post_meta(
-                $post_id,
-                WPCSTenant::WPCS_PRODUCT_ROLE_META,
-                $_POST[WPCSTenant::WPCS_PRODUCT_ROLE_META]
-            );
+        if ($_POST['post_type'] === 'product') {
+            if (array_key_exists(WPCSTenant::WPCS_PRODUCT_ROLE_META, $_POST)) {
+                update_post_meta(
+                    $post_id,
+                    WPCSTenant::WPCS_PRODUCT_ROLE_META,
+                    $_POST[WPCSTenant::WPCS_PRODUCT_ROLE_META]
+                );
+            }
+
+            if (array_key_exists(WPCSTenant::WPCS_PRODUCT_GROUPNAME_META, $_POST)) {
+                $group_name = $_POST[WPCSTenant::WPCS_PRODUCT_GROUPNAME_META];
+                if (strlen($group_name) > 0) {
+                    update_post_meta(
+                        $post_id,
+                        WPCSTenant::WPCS_PRODUCT_GROUPNAME_META,
+                        $group_name
+                    );
+                }
+            }
         }
     }
 }
