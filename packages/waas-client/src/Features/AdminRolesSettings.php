@@ -82,6 +82,7 @@ class AdminRolesSettings
                     <div id='wpcs-role-<?= $role_name ?>' class='wpcs single-role-container'>
                         <input type='hidden' name='delete_roles[<?= $role_name ?>]' value="0" />
                         <h2><?= $role_data['title'] ?></h2>
+                        <span>(<?= $role_name ?>)</span>
                         <ul>
                             <?php foreach ($wp_plugins as $plugin_name => $plugin) : ?>
                                 <li>

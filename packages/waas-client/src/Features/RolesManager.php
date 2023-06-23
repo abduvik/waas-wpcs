@@ -7,6 +7,11 @@ class RolesManager
     public function __construct()
     {
         add_action('init', [$this, 'activate_enabled_plugins']);
+
+        if (defined(PluginBootstrap::TENANT_ROLES_CONSTANT)) {
+            add_filter('option_'.PluginBootstrap::TENANT_ROLES, [$this, 'get_roles_from_constant']);
+            add_filter('default_option_'.PluginBootstrap::TENANT_ROLES, [$this, 'get_roles_from_constant']);
+        }
     }
 
     public function activate_enabled_plugins(): void
@@ -34,5 +39,9 @@ class RolesManager
 
         $disabled_plugins = array_filter($disabled_plugins, fn ($item) => $item !== PluginBootstrap::PLUGIN_NAME && is_plugin_active($item));
         deactivate_plugins($disabled_plugins);
+    }
+
+    public function get_roles_from_constant() {
+        return explode(',', constant(PluginBootstrap::TENANT_ROLES_CONSTANT));
     }
 }

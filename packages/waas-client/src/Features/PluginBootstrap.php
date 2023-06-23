@@ -7,6 +7,7 @@ use WaaSClient\Core\HttpService;
 class PluginBootstrap
 {
     const TENANT_ROLES = 'WPCS_TENANT_ROLES';
+    const TENANT_ROLES_CONSTANT = 'WPCS_TENANT_ROLES';
     const EXTERNAL_ID = 'WPCS_TENANT_EXTERNAL_ID';
     const API_V1_NAMESPACE = 'waas-client/v1';
     const PLUGIN_NAME = 'waas-client/index.php';
