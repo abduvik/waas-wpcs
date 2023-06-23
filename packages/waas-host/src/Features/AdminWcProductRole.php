@@ -3,11 +3,15 @@
 namespace WaaSHost\Features;
 
 use WaaSHost\Core\WPCSTenant;
+use WaaSHost\Core\WPCSService;
 
 class AdminWcProductRole
 {
-    public function __construct()
+    private WPCSService $wpcsService;
+
+    public function __construct(WPCSService $wpcsService)
     {
+        $this->wpcsService = $wpcsService;
         add_action('add_meta_boxes', [$this, 'create_woocommerce_wpcs_versions_selector']);
         add_action('save_post', [$this, 'save_woocommerce_wpcs_versions_selector']);
     }
@@ -49,9 +53,16 @@ class AdminWcProductRole
 
     public function render_woocommerce_group_name_input($post)
     {
-        $group_name = get_post_meta($post->ID, WPCSTenant::WPCS_PRODUCT_GROUPNAME_META, true);
-        echo '<label for="' . WPCSTenant::WPCS_PRODUCT_GROUPNAME_META . '">Tenant Snapshot Groupname</label>';
-        echo "<input name='" . WPCSTenant::WPCS_PRODUCT_GROUPNAME_META . "' class='postbox' type='text' value='" . $group_name . "' />";
+        $selected_group_name = get_post_meta($post->ID, WPCSTenant::WPCS_PRODUCT_GROUPNAME_META, true);
+        $available_groupnames = $this->wpcsService->get_available_groupnames();
+        echo "<label for='" . WPCSTenant::WPCS_PRODUCT_GROUPNAME_META . "'>Tenant Snapshot Groupname</label>";
+
+        echo "<select name='" . WPCSTenant::WPCS_PRODUCT_GROUPNAME_META . "' class='postbox'>";
+        echo '<option ' . selected("", $selected_group_name) . 'value="">-- No Tenant Snapshot --</option>';
+        foreach ($available_groupnames as $group_name) {
+            echo "<option " . selected($group_name, $selected_group_name) . " value='$group_name'>$group_name</option>";
+        }
+        echo '</select>';
     }
 
 
@@ -68,13 +79,11 @@ class AdminWcProductRole
 
             if (array_key_exists(WPCSTenant::WPCS_PRODUCT_GROUPNAME_META, $_POST)) {
                 $group_name = $_POST[WPCSTenant::WPCS_PRODUCT_GROUPNAME_META];
-                if (strlen($group_name) > 0) {
-                    update_post_meta(
-                        $post_id,
-                        WPCSTenant::WPCS_PRODUCT_GROUPNAME_META,
-                        $group_name
-                    );
-                }
+                update_post_meta(
+                    $post_id,
+                    WPCSTenant::WPCS_PRODUCT_GROUPNAME_META,
+                    $group_name
+                );
             }
         }
     }

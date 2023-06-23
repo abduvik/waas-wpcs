@@ -33,6 +33,22 @@ class WPCSService
         throw new \Exception('Failed to find any version');
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function get_available_groupnames()
+    {
+        $snapshots= $this->httpService->get('/v1/snapshots?onlyProductionVersion=true');
+        $a = array();
+        foreach ($snapshots as $snapshot) {
+            if (isset($snapshot->groupName) && !empty($snapshot->groupName) && !in_array($snapshot->groupName, $a)) {
+                array_push($a, $snapshot->groupName);
+            }
+        }
+
+        return $a;
+    }
+
     public function create_tenant($args)
     {
         $payload = [

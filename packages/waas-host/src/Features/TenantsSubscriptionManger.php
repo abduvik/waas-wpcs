@@ -42,7 +42,7 @@ class TenantsSubscriptionManger
             'wordpress_email' => $order->get_billing_email(),
             'wordpress_password' => $password,
             'wordpress_user_role' => 'administrator',
-            'group_name' => $group_name === false ? null : $group_name,
+            'group_name' => ($group_name === false || empty($group_name)) ? null : $group_name,
         ];
 
         $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');

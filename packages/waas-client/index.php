@@ -8,7 +8,7 @@ Plugin Name: WaaS Client
 Plugin URI: https://github.com/Daxez/waas-wpcs
 Description: This plugin is used to handle secure communication between tenant on WPCS and Storefront. Forked from https://github.com/abduvik/wpcs-waas
 Author: WPCS
-Version: 1.5.0
+Version: 1.5.1
 Author URI: https://wpcs.io
 */
 
