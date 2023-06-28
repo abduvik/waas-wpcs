@@ -8,7 +8,7 @@ use WaaSHost\Core\WPCSService;
 use WaaSHost\Core\WPCSTenant;
 use WC_Order;
 
-class TenantsSubscriptionManger
+class TenantsSubscriptionManager
 {
     private WPCSService $wpcsService;
     private EncryptionService $encryptionService;
