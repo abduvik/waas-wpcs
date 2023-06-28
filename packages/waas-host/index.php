@@ -7,7 +7,7 @@ use WaaSHost\Core\HttpService;
 use WaaSHost\Core\WPCSService;
 use WaaSHost\Features\PluginBootstrap;
 use WaaSHost\Features\TenantsAddOnSubscriptionManager;
-use WaaSHost\Features\TenantsSubscriptionManger;
+use WaaSHost\Features\TenantsSubscriptionManager;
 use WaaSHost\Features\UserAccountSubscriptionsSettings;
 use WaaSHost\Features\UserWcTenantsCheckout;
 use WaaSHost\Features\AdminWcProductRole;
@@ -45,7 +45,7 @@ new RolesController($wpcsService);
 
 // UI
 new SingleLogin($encryptionService);
-new TenantsSubscriptionManger($wpcsService, $encryptionService);
+new TenantsSubscriptionManager($wpcsService, $encryptionService);
 new TenantsAddOnSubscriptionManager();
 new AdminWpcsSettings();
 new UserAccountSubscriptionsSettings($wpcsService);
