@@ -49,6 +49,7 @@ class AdminWcProductRole
             echo "<option " . selected($role_name, $selected_role) . " value='$role_name'>$role_data->title</option>";
         }
         echo '</select>';
+        echo '<p><a href="' . admin_url('admin-post.php?action=wpcs_refresh_roles') . '">Refresh Roles</a></p>';
     }
 
     public function render_woocommerce_group_name_input($post)
@@ -68,7 +69,8 @@ class AdminWcProductRole
 
     public function save_woocommerce_wpcs_versions_selector($post_id)
     {
-        if ($_POST['post_type'] === 'product') {
+        if (array_key_exists('post_type', $_POST) && $_POST['post_type'] === 'product')
+        {
             if (array_key_exists(WPCSTenant::WPCS_PRODUCT_ROLE_META, $_POST)) {
                 update_post_meta(
                     $post_id,

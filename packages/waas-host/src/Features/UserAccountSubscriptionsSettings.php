@@ -3,7 +3,6 @@
 namespace WaaSHost\Features;
 
 use Exception;
-use WC_Order;
 use WaaSHost\Core\WPCSService;
 use WaaSHost\Core\WPCSTenant;
 
@@ -15,26 +14,25 @@ class UserAccountSubscriptionsSettings
     {
         $this->wpcsService = $wpcsService;
 
-        add_action('woocommerce_subscription_details_table', [$this, 'render_single_login'], 10, 1);
-        add_action('woocommerce_subscription_details_table', [$this, 'render_edit_domain'], 10, 1);
+        add_action('wpcs_after_subscription_details_html', [$this, 'render_single_login'], 10, 2);
+        add_action('wpcs_after_subscription_details_html', [$this, 'render_edit_domain'], 10, 1);
         add_action('remove_tenant_old_domain', [$this, 'remove_tenant_old_domain'], 1, 2);
         add_filter('wcs_view_subscription_actions', [$this, 'remove_subscription_actions'], 10, 1);
     }
 
-    public function render_single_login(\WC_Subscription $subscription)
+    public function render_single_login($subscription_id, $order)
     {
-        $order = $subscription->get_parent();
         $email = $order->get_billing_email();
-        $loginLink = '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription->get_id() . '&email=' . urlencode($email);
+        $loginLink = '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription_id . '&email=' . urlencode($email);
 
         echo "<a href='$loginLink' target='_blank' class='button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
     }
 
-    public function render_edit_domain(\WC_Subscription $subscription)
+    public function render_edit_domain($subscription_id)
     {
-        $this->handle_update_subscription_domain($subscription);
-        $domain_name = get_post_meta($subscription->get_id(), WPCSTenant::WPCS_DOMAIN_NAME_META, true);
-        $base_domain_name = get_post_meta($subscription->get_id(), WPCSTenant::WPCS_BASE_DOMAIN_NAME_META, true);
+        $this->handle_update_subscription_domain($subscription_id);
+        $domain_name = get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true);
+        $base_domain_name = get_post_meta($subscription_id, WPCSTenant::WPCS_BASE_DOMAIN_NAME_META, true);
 
         $domain_name = $domain_name ?: $base_domain_name;
 
@@ -47,11 +45,12 @@ class UserAccountSubscriptionsSettings
 	            <button class='button' type='submit'>Update</button>
 	           </form><br /><br />";
 
-        $api_region = get_option('wpcs_credentials_region_setting');
-        echo '<p>Before verifying a domain, make sure that its DNS contains the following settings.</p>
-              <p>For the domain apex add A records with the following IPs as their values:</p>';
+        $api_region = get_option('wpcs_credentials_region_setting', '');
+        echo '<div class="wpcs-ip-instructions">
+              <p>Before verifying a domain, make sure that its DNS contains the following settings.</p>
+              <p>For the domain apex add A records with <b>each of the following IPs</b> as their values:</p>';
 
-        if($api_region == 'us1'){
+        if(strtolower($api_region) == 'us1'){
             echo '
 <pre>
 54.166.55.112
@@ -60,7 +59,7 @@ class UserAccountSubscriptionsSettings
 </pre>
               <p>If you are verifying a subdomain, create a CNAME record with the value:</p>
               <pre>public.us1.wpcs.io</pre>';
-        } elseif($api_region == 'eu1') {
+        } elseif(strtolower($api_region) == 'eu1') {
             echo '
 <pre>
 54.74.209.56
@@ -73,10 +72,13 @@ class UserAccountSubscriptionsSettings
             echo 'The region is currently not setup correctly.';
         }
 
-        echo '<h4>Website Status</h4>';
+        echo '</div>';
+
+        // echo '<h4>Website Status</h4>';
+        // [TODO]: Do status here
     }
 
-    public function handle_update_subscription_domain(\WC_Subscription $subscription)
+    public function handle_update_subscription_domain($subscription_id)
     {
         if (!isset($_POST['domain_name'])) {
             return;
@@ -84,8 +86,8 @@ class UserAccountSubscriptionsSettings
 
         $domain = sanitize_text_field($_POST['domain_name']);
 
-        $tenant_external_id = get_post_meta($subscription->get_id(), WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, true);
-        $tenant_current_domain_name = get_post_meta($subscription->get_id(), WPCSTenant::WPCS_DOMAIN_NAME_META, true);
+        $tenant_external_id = get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, true);
+        $tenant_current_domain_name = get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true);
 
         if ($_POST['domain_name'] === $tenant_current_domain_name) {
             return;
@@ -97,7 +99,7 @@ class UserAccountSubscriptionsSettings
                 'domain_name' => $domain,
             ]);
 
-            update_post_meta($subscription->get_id(), WPCSTenant::WPCS_DOMAIN_NAME_META, $domain);
+            update_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, $domain);
 
             if ($tenant_current_domain_name) {
                 wp_schedule_single_event(time() + 300, 'remove_tenant_old_domain', [$tenant_external_id, $tenant_current_domain_name]);

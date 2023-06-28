@@ -56,7 +56,7 @@ class WPCSService
             'wordPressUserName' => $args['wordpress_username'],
             'wordPressUserEmail' => $args['wordpress_email'],
             'wordPressUserPassword' => $args['wordpress_password'],
-            'wordPressUserRole' => $args['wordpress_user_role']
+            'wordPressUserRole' => $args['wordpress_user_role'],
         ];
 
         if (isset($args['custom_domain_name'])) {
@@ -66,6 +66,12 @@ class WPCSService
         if (isset($args['group_name'])) {
             $payload['groupName'] = $args['group_name'];
         }
+
+        if (isset($args['php_constants'])) {
+            $payload['phpConstants'] = $args['php_constants'];
+        }
+
+        apply_filters('wpcs_tenant_create_payload', $payload);
 
         return $this->httpService->post('/v1/tenants', $payload);
     }
