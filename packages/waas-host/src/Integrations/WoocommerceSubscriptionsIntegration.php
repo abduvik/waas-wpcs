@@ -6,10 +6,13 @@ class WoocommerceSubscriptionsIntegration
 {
     public static function init()
     {
-        add_action('woocommerce_checkout_subscription_created', [__CLASS__, 'create_tenant_when_subscription_created'], 10, 2);
-        add_action('woocommerce_subscription_status_cancelled', [__CLASS__, 'remove_tenant_when_subscription_expired']);
-        add_action('woocommerce_subscription_details_table', [__CLASS__, 'after_subscription_details_html']);
-        add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
+        if(is_plugin_active('woocommerce-subscriptions/woocommerce-subscriptions.php'))
+        {
+            add_action('woocommerce_checkout_subscription_created', [__CLASS__, 'create_tenant_when_subscription_created'], 10, 2);
+            add_action('woocommerce_subscription_status_cancelled', [__CLASS__, 'remove_tenant_when_subscription_expired']);
+            add_action('woocommerce_subscription_details_table', [__CLASS__, 'after_subscription_details_html']);
+            add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
+        }
     }
 
     public static function create_tenant_when_subscription_created(\WC_Subscription $subscription, \WC_Order $order)
