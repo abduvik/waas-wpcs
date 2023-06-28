@@ -55,7 +55,7 @@ class TenantsSubscriptionManger
             'group_name' => ($group_name === false || empty($group_name)) ? null : $group_name,
             'php_constants' => [
                 'WPCS_TENANT_ROLES' => ['value' => implode(",", $subscription_roles), 'isPrivate' => false],
-                'WPCS_PUBLIC_KEY' => ['value' => $keys['public_key'], 'isPrivate' => false],
+                'WPCS_PUBLIC_KEY' => ['value' => base64_encode($keys['public_key']), 'isPrivate' => false],
             ]
         ];
 

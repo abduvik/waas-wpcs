@@ -41,7 +41,7 @@ class SingleSignOnController
                 return new WP_Error('Cannot determine public key!');
             }
         } else {
-            $public_key = constant(static::WPCS_PUBLIC_KEY_CONST_NAME);
+            $public_key = base64_decode(constant(static::WPCS_PUBLIC_KEY_CONST_NAME));
         }
 
         $data = $this->decryptionService->decrypt($public_key, $token_decoded);
