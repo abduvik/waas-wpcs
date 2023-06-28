@@ -60,7 +60,7 @@ class SingleSignOnController
         $expires_in = $data->expires + 0;
         $utc_now = gmdate("U") + 0;
         if ($expires_in  < $utc_now) {
-            return new WP_Error('Token not expired');
+            return new WP_Error('Token expired');
         }
 
         $user_email = $data->email;
