@@ -46,7 +46,7 @@ new RolesController($wpcsService);
 // UI
 new SingleLogin($encryptionService);
 new TenantsSubscriptionManager($wpcsService, $encryptionService);
-new TenantsAddOnSubscriptionManager();
+new TenantsAddOnSubscriptionManager($wpcsService);
 new AdminWpcsSettings();
 new UserAccountSubscriptionsSettings($wpcsService);
 new AdminWcProductRole($wpcsService);

@@ -76,6 +76,23 @@ class WPCSService
         return $this->httpService->post('/v1/tenants', $payload);
     }
 
+    public function update_tenant($external_id, $args)
+    {
+        $payload = [];
+
+        if (isset($args['php_constants'])) {
+            $payload['phpConstants'] = $args['php_constants'];
+        }
+
+        if (isset($args['wp_options'])) {
+            $payload['wpOptions'] = $args['wp_options'];
+        }
+
+        apply_filters('wpcs_tenant_update_payload', $payload);
+
+        return $this->httpService->put('/v1/tenants?externalId='.$external_id, $payload);
+    }
+
     public function delete_tenant($args)
     {
         return $this->httpService->delete('/v1/tenants?tenantId=' . $args['external_id']);
