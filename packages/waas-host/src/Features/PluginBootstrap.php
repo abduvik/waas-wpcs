@@ -18,8 +18,7 @@ class PluginBootstrap
 
     function hide_addon_products_from_shop_page($q)
     {
-
-        if (!is_shop()) {
+        if (!\is_shop()) {
             return;
         }
 
