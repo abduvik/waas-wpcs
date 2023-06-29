@@ -77,9 +77,16 @@ class HttpService
 
         if (is_wp_error($response)) {
             throw new Exception("Failed");
-        }
+        } else {
+            $response_code = wp_remote_retrieve_response_code($response);
 
-        return json_decode($response['body']);
+            if (200 !== $response_code) {
+                throw new Exception("Failed: " . $response_code);
+            } else {
+                // Process the successful response
+                return json_decode($response['body']);
+            }
+        }
     }
 
     /**

@@ -15,6 +15,7 @@ use WaaSHost\Features\AdminWpcsSettings;
 use WaaSHost\Features\AdminNotices;
 use WaaSHost\Features\AddonProductCategory;
 use WaaSHost\Features\Notifications;
+use WaaSHost\Features\WPCSTenantStatusService;
 use WaaSHost\Integrations\WoocommerceSubscriptionsIntegration;
 use WaaSHost\Integrations\SubscriptionsForWoocommerceIntegration;
 
@@ -60,6 +61,7 @@ new AdminWpcsSettings();
 new UserAccountSubscriptionsSettings($wpcsService);
 new AdminWcProductRole($wpcsService);
 new UserWcTenantsCheckout($wpcsService);
+new WPCSTenantStatusService($wpcsService);
 AdminNotices::init();
 
 // Integrations

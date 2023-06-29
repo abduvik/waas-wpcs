@@ -38,7 +38,7 @@ class WPCSService
      */
     public function get_available_groupnames()
     {
-        $snapshots= $this->httpService->get('/v1/snapshots?onlyProductionVersion=true');
+        $snapshots = $this->httpService->get('/v1/snapshots?onlyProductionVersion=true');
         $a = array();
         foreach ($snapshots as $snapshot) {
             if (isset($snapshot->groupName) && !empty($snapshot->groupName) && !in_array($snapshot->groupName, $a)) {
@@ -90,7 +90,7 @@ class WPCSService
 
         apply_filters('wpcs_tenant_update_payload', $payload);
 
-        return $this->httpService->put('/v1/tenants?externalId='.$external_id, $payload);
+        return $this->httpService->put('/v1/tenants?externalId=' . $external_id, $payload);
     }
 
     public function delete_tenant($args)
@@ -126,5 +126,16 @@ class WPCSService
         }
 
         return json_decode($response['body'])->available;
+    }
+
+    /**
+     * @throws \Exception
+     * 
+     */
+    public function get_tenant_safe($external_id)
+    {
+        $tenant_array = $this->httpService->get('/v1/tenants?externalId=' . $external_id);
+        $tenant = reset($tenant_array);
+        return $tenant !== false ? $tenant : null;
     }
 }
