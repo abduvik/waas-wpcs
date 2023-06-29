@@ -37,7 +37,7 @@ define( 'WPCS_WAAS_HOST_SLUG', 'wpcs-waas-host' );
 define( 'WPCS_WAAS_HOST_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WPCS_WAAS_HOST_UPDATE_URI', 'wpcs-waas-host' );
 define( 'WPCS_WAAS_HOST_VERSION', '1.5.1' );
-define( 'WPCS_SAAS_HOST_TEXTDOMAIN', 'wpcs-waas-host-textdomain' );
+define( 'WPCS_WAAS_HOST_TEXTDOMAIN', 'wpcs-waas-host-textdomain' );
 
 define('WPCS_API_REGION', get_option('wpcs_credentials_region_setting')); // Or eu1, depending on your region.
 define('WPCS_API_KEY', get_option('wpcs_credentials_api_key_setting')); // The API Key you retrieved from the console

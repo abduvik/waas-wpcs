@@ -22,9 +22,9 @@ class AddonProductCategory
             return;
         }
 
-        wp_insert_term(__('Add-on', WPCS_SAAS_HOST_TEXTDOMAIN), self::TERM_TAX_SLUG, [
+        wp_insert_term(__('Add-on', WPCS_WAAS_HOST_TEXTDOMAIN), self::TERM_TAX_SLUG, [
             'slug' => self::TERM_SLUG,
-            'description' => __( 'An add-on is used to sell additional features for the base plans you offer.', WPCS_SAAS_HOST_TEXTDOMAIN ),
+            'description' => __( 'An add-on is used to sell additional features for the base plans you offer.', WPCS_WAAS_HOST_TEXTDOMAIN ),
         ]);
     }
 
@@ -49,7 +49,7 @@ class AddonProductCategory
                 }
 
                 // No base products were found, cannot add.
-                \wc_add_notice(__('Cannot add an Add-on to the cart without a base product.', WPCS_SAAS_HOST_TEXTDOMAIN), 'notice');
+                \wc_add_notice(__('Cannot add an Add-on to the cart without a base product.', WPCS_WAAS_HOST_TEXTDOMAIN), 'notice');
                 return false;
             }
         }
@@ -81,7 +81,7 @@ class AddonProductCategory
 
         if($cart_contains_add_on && !$cart_contains_base_product)
         {
-            $text = __('Cannot proceed to checkout with an Add-on but no base product. Please add a base product to your cart.', WPCS_SAAS_HOST_TEXTDOMAIN);
+            $text = __('Cannot proceed to checkout with an Add-on but no base product. Please add a base product to your cart.', WPCS_WAAS_HOST_TEXTDOMAIN);
 
             // Needs to be of type error, otherwise checkout is not prevented.
             \wc_add_notice($text, 'error');
