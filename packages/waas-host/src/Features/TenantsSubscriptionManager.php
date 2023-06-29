@@ -19,7 +19,6 @@ class TenantsSubscriptionManager
         $this->encryptionService = $encryptionService;
 
         add_action('wpcs_subscription_created', [$this, 'create_tenant_when_subscription_created'], 10, 2);
-
         add_action('wpcs_subscription_expired', [$this, 'remove_tenant_when_subscription_expired']);
     }
 
@@ -76,27 +75,7 @@ class TenantsSubscriptionManager
         update_post_meta($subscription_id, WPCSTenant::WPCS_BASE_DOMAIN_NAME_META, $new_tenant->baseDomain);
         update_post_meta($subscription_id, WPCSTenant::WPCS_SUBSCRIPTION_USER_ROLES, [$product_role]);
 
-        $this->send_created_email([
-            'email' => $order->get_billing_email(),
-            'password' => $password,
-            'domain' => $domain_name
-        ]);
-    }
-
-    public function send_created_email($args)
-    {
-        wp_mail($args['email'], 'Your website is being created', "
-        <!doctype html>
-        <html lang='en'>
-        <body>
-            <p>Hello,</p>
-            <p>You can login to your website in a few minutes. Use the info below to login. Don't forget to reset your password!</p>
-            <p><strong>Admin Url</strong>: <a href='https://{$args['domain']}/wp-admin'>https://{$args['domain']}/wp-admin</a></p>
-            <p><strong>Email</strong> : {$args['email']}</p>
-            <p><strong>Password</strong> : {$args['password']}</p>
-        </body>
-        </html>
-        ", ['Content-Type: text/html; charset=UTF-8']);
+        do_action('wpcs_tenant_linked_to_subscription', $subscription_id);
     }
 
     public function remove_tenant_when_subscription_expired($subscription_id)

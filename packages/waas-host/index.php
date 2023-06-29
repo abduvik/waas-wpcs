@@ -14,6 +14,7 @@ use WaaSHost\Features\AdminWcProductRole;
 use WaaSHost\Features\AdminWpcsSettings;
 use WaaSHost\Features\AdminNotices;
 use WaaSHost\Features\AddonProductCategory;
+use WaaSHost\Features\Notifications;
 use WaaSHost\Integrations\WoocommerceSubscriptionsIntegration;
 use WaaSHost\Integrations\SubscriptionsForWoocommerceIntegration;
 
@@ -65,11 +66,9 @@ AdminNotices::init();
 SubscriptionsForWoocommerceIntegration::init();
 WoocommerceSubscriptionsIntegration::init();
 
-// Updater
 WaaSHost\Updater\Module::init();
-
-// Add-on taxonomy
 AddonProductCategory::init();
+Notifications::init();
 
 // Plugin Bootstrap
 new PluginBootstrap();
