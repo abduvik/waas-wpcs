@@ -1,0 +1,17 @@
+{
+    "name": "WPCS WaaS Client",
+    "slug": "wpcs-waas-client",
+    "version": "%WPCS_WAAS_CLIENT_PLUGIN_VERSION%",
+    "tested": "6.2.2",
+    "homepage": "https://wpcs.io",
+    "description": "Plugin to easily create and sell your SaaS or WaaS via WPCS.io.",
+    "requires": "5.8",
+    "author": "<a href=\"https://wpcs.io\">WPCS</a>",
+    "package": "https://github.com/Daxez/waas-wpcs/releases/latest/download/wpcs-waas-client.zip",
+    "sections": {
+        "description": "",
+        "changelog": "",
+        "installation": "",
+        "upgrade_notice": ""
+    }
+}

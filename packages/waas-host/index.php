@@ -29,7 +29,13 @@ Description: This plugin is used to create tenants on WPCS.io with support of Wo
 Author: WPCS
 Version: 1.5.1
 Author URI: https://wpcs.io
+Update URI: wpcs-waas-host
 */
+
+define( 'WPCS_WAAS_HOST_SLUG', 'wpcs-waas-host' );
+define( 'WPCS_WAAS_HOST_BASENAME', plugin_basename( __FILE__ ) );
+define( 'WPCS_WAAS_HOST_UPDATE_URI', 'wpcs-waas-host' );
+define( 'WPCS_WAAS_HOST_VERSION', '1.5.1' );
 
 define('WPCS_API_REGION', get_option('wpcs_credentials_region_setting')); // Or eu1, depending on your region.
 define('WPCS_API_KEY', get_option('wpcs_credentials_api_key_setting')); // The API Key you retrieved from the console
@@ -56,6 +62,9 @@ AdminNotices::init();
 // Integrations
 SubscriptionsForWoocommerceIntegration::init();
 WoocommerceSubscriptionsIntegration::init();
+
+// Updater
+WaaSHost\Updater\Module::init();
 
 // Plugin Bootstrap
 new PluginBootstrap();

@@ -10,7 +10,13 @@ Description: This plugin is used as counterpart for the WaaS-Host plugin in repo
 Author: WPCS
 Version: 1.5.1
 Author URI: https://wpcs.io
+Update URI: wpcs-waas-client
 */
+
+define( 'WPCS_WAAS_CLIENT_SLUG', 'wpcs-waas-client' );
+define( 'WPCS_WAAS_CLIENT_BASENAME', plugin_basename( __FILE__ ) );
+define( 'WPCS_WAAS_CLIENT_UPDATE_URI', 'wpcs-waas-client' );
+define( 'WPCS_WAAS_CLIENT_VERSION', '1.5.1' );
 
 use WaaSClient\Api\SingleSignOnController;
 use WaaSClient\Core\DecryptionService;
@@ -37,6 +43,9 @@ if (!wp_doing_ajax()) {
     new PluginBootstrap();
 
     new SingleSignOnController($decryptionService);
+
+    // Updater
+    WaaSClient\Updater\Module::init();
 
     if (getenv("WPCS_IS_TENANT") !== 'true') {
         new AdminTenantSettings();
