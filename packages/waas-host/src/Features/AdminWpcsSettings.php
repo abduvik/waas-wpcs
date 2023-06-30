@@ -53,7 +53,11 @@ class AdminWpcsSettings
             [
                 "id" => "wpcs_credentials_region_setting",
                 "title" => __("WPCS Region", WPCS_WAAS_HOST_TEXTDOMAIN),
-                "type" => "text"
+                "type" => "select",
+                "choices" => [
+                    'eu1' => __('EU1', WPCS_WAAS_HOST_TEXTDOMAIN),
+                    'us1' => __('US1', WPCS_WAAS_HOST_TEXTDOMAIN),
+                ],
             ]
         );
 
@@ -131,10 +135,22 @@ class AdminWpcsSettings
 
     function render_settings_field($args)
     {
-        if ($args['type'] === 'checkbox') {
-            echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' " . checked(get_option($args["id"], "on"), "on", false) . ">";
-        } else {
-            echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' value='" . get_option($args["id"]) . "'>";
+        switch ($args['type']) {
+            case 'checkbox':
+                echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' " . checked(get_option($args["id"], "on"), "on", false) . ">";
+                break;
+            case 'select':
+                $current_value = get_option($args["id"]);
+                echo "<select id='{$args["id"]}' name='{$args["id"]}'>";
+                foreach ($args['choices'] as $value => $label) {
+                    $selected = selected($current_value, $value, false);
+                    echo "<option value='{$value}' {$selected}>{$label}</option>";
+                }
+                echo "</select>";
+                break;
+            default:
+                echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' value='" . get_option($args["id"]) . "'>";
+                break;
         }
     }
 
