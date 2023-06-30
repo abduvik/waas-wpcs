@@ -32,18 +32,20 @@ class Notifications
     private static function get_ready_email_body($subscription_id, $recipient)
     {
         $domain = get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true);
+        $storefront_domain = get_site_url();
+        $storefront_login_url = "https://{$storefront_domain}/my-account/show-subscription/{$subscription_id}";
 
-        $text = "
+        $text = `
         <!doctype html>
         <html lang='en'>
         <body>
             <p>Hello,</p>
-            <p>You can login to your website in a few minutes. Use the info below to login. Don't forget to reset your password!</p>
-            <p><strong>Admin Url</strong>: <a href='https://{$domain}/wp-admin'>https://{$domain}/wp-admin</a></p>
-            <p><strong>Email</strong> : {$recipient}</p>
+            <p>Good news!</p>
+            <p>You can login to your website <a href="{$domain}">{$domain}</a>! Log into our shop, view your subscription and hit the "Login as {$recipient}" button.</p>
+            <p><strong>Your subscription can be found at</strong>: <a href="$storefront_login_url">$storefront_login_url</a></p>
         </body>
         </html>
-        ";
+        `;
 
         return $text;
     }
