@@ -2,6 +2,9 @@
 
 namespace WaaSHost\Integrations;
 
+use WaaSHost\Core\WPCSTenant;
+use WaaSHost\Features\SingleLoginService;
+
 class SubscriptionsForWoocommerceIntegration
 {
     public static function init()
@@ -12,6 +15,8 @@ class SubscriptionsForWoocommerceIntegration
             add_action('wps_sfw_subscription_cancel', [__CLASS__, 'remove_tenant_when_subscription_expired']);
             add_action('wps_sfw_after_subscription_details', [__CLASS__, 'ater_subscription_details_html'], 100);
             add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
+            add_filter('wps_sfw_subscription_details_html', [__CLASS__, 'show_tenant_status'], 10, 1);
+            add_filter('wps_sfw_subscription_details_html', [__CLASS__, 'show_login_link'], 10, 1);
         }
     }
 
@@ -36,5 +41,31 @@ class SubscriptionsForWoocommerceIntegration
     {
         $order = new \WC_Order($subscription_id);
         return $order->get_billing_email();
+    }
+
+    public static function show_tenant_status($subscription_id)
+    {
+        $tenant = new WPCSTenant($subscription_id);
+        ?>
+        <tr>
+            <td>Website status</td>
+            <td><?php echo $tenant->get_status(); ?></td>
+        </tr>
+        <?php
+    }
+
+    public static function show_login_link($subscription_id)
+    {
+        $order = new \WC_Order($subscription_id);
+        $login_link = SingleLoginService::get_login_link($subscription_id, $order);
+        ?>
+        <tr>
+            <td colspan="2">
+                <a href='<?php echo $login_link; ?>' target='_blank' class="wpcs-single-login-button">
+                    Login as <?php echo $order->get_billing_email(); ?>
+                </a>
+            </td>
+        </tr>
+        <?php
     }
 }

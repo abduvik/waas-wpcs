@@ -14,18 +14,9 @@ class UserAccountSubscriptionsSettings
     {
         $this->wpcsService = $wpcsService;
 
-        add_action('wpcs_after_subscription_details_html', [$this, 'render_single_login'], 10, 2);
         add_action('wpcs_after_subscription_details_html', [$this, 'render_edit_domain'], 10, 1);
         add_action('remove_tenant_old_domain', [$this, 'remove_tenant_old_domain'], 1, 2);
         add_filter('wcs_view_subscription_actions', [$this, 'remove_subscription_actions'], 10, 1);
-    }
-
-    public function render_single_login($subscription_id, $order)
-    {
-        $email = $order->get_billing_email();
-        $loginLink = '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription_id . '&email=' . urlencode($email);
-
-        echo "<a href='$loginLink' target='_blank' class='button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
     }
 
     public function render_edit_domain($subscription_id)

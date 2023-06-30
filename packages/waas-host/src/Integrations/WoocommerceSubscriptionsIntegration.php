@@ -2,6 +2,8 @@
 
 namespace WaaSHost\Integrations;
 
+use WaaSHost\Features\SingleLoginService;
+
 class WoocommerceSubscriptionsIntegration
 {
     public static function init()
@@ -10,6 +12,7 @@ class WoocommerceSubscriptionsIntegration
             add_action('woocommerce_checkout_subscription_created', [__CLASS__, 'create_tenant_when_subscription_created'], 10, 2);
             add_action('woocommerce_subscription_status_cancelled', [__CLASS__, 'remove_tenant_when_subscription_expired']);
             add_action('woocommerce_subscription_details_table', [__CLASS__, 'after_subscription_details_html']);
+            add_action('woocommerce_subscription_details_table', [__CLASS__, 'show_login_link']);
             add_action('ssd_add_simple_product_before_calculate_totals', [__CLASS__, 'on_add_send_update_tenant_user_roles'], 20, 1);
             add_action('wcs_user_removed_item', [__CLASS__, 'on_remove_send_update_tenant_user_roles'], 20, 2);
             add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
@@ -32,6 +35,14 @@ class WoocommerceSubscriptionsIntegration
         do_action('wpcs_after_subscription_details_html', $subscription->get_id(), $order);
     }
 
+    public static function show_login_link(\WC_Subscription $subscription)
+    {
+        $order = $order = $subscription->get_parent();
+        $login_link = SingleLoginService::get_login_link($subscription->get_id(), $order);
+        $email = $order->get_billing_email();
+        echo "<a href='$login_link' target='_blank' class='wpcs-single-login-button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
+    }
+
     public static function subscription_id_to_email_filter($value, $subscription_id)
     {
         $subscription = new \WC_Subscription($subscription_id);
@@ -39,7 +50,7 @@ class WoocommerceSubscriptionsIntegration
         $order->get_billing_email();
     }
 
-    public function on_add_send_update_tenant_user_roles(\WC_Subscription $subscription): void
+    public static function on_add_send_update_tenant_user_roles(\WC_Subscription $subscription): void
     {
         $order_items = $subscription->get_items();
         $subscription_roles = [];
@@ -50,7 +61,7 @@ class WoocommerceSubscriptionsIntegration
         do_action('wpcs_tenant_roles_changed', $subscription->get_id(), $subscription_roles);
     }
 
-    public function on_remove_send_update_tenant_user_roles(\WC_Order_Item_Product $line_item, \WC_Subscription $subscription): void
+    public static function on_remove_send_update_tenant_user_roles(\WC_Order_Item_Product $line_item, \WC_Subscription $subscription): void
     {
         $order_items = $subscription->get_items();
         $subscription_roles = [];
