@@ -39,7 +39,7 @@ class AdminWpcsSettings
         add_settings_section(
             'wpcs_credentials',
             __('WPCS Credentials', WPCS_WAAS_HOST_TEXTDOMAIN),
-            fn() => "<p>Intro text for our settings section</p>",
+            fn () => "<p>Intro text for our settings section</p>",
             'wpcs-admin'
         );
 
@@ -88,7 +88,7 @@ class AdminWpcsSettings
         add_settings_section(
             'wpcs_host_settings',
             'WPCS Host Settings',
-            fn() => "<p>Intro text for our settings section</p>",
+            fn () => "<p>Intro text for our settings section</p>",
             'wpcs-admin'
         );
 
@@ -109,7 +109,7 @@ class AdminWpcsSettings
         add_settings_section(
             'wpcs_notification_settings',
             __('WPCS Notification Settings', WPCS_WAAS_HOST_TEXTDOMAIN),
-            fn() => "",
+            fn () => "",
             'wpcs-admin'
         );
 
@@ -141,14 +141,10 @@ class AdminWpcsSettings
     function allow_tenant_ready_email($allowed)
     {
         // If somebody else disallowed, respect their decision.
-        if(!$allowed)
-        {
+        if (!$allowed) {
             return $allowed;
         }
 
         return get_option(self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION, 'off') === 'on';
     }
 }
-
-
-

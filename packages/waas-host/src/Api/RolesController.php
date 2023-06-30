@@ -4,10 +4,8 @@ namespace WaaSHost\Api;
 
 use WaaSHost\Core\HttpService;
 use WaaSHost\Core\WPCSService;
-use WaaSHost\Core\WPCSTenant;
 use WaaSHost\Features\AdminNotices;
 use WaaSHost\Features\PluginBootstrap;
-use PhpParser\Error;
 
 class RolesController
 {

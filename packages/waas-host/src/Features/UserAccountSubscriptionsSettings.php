@@ -73,9 +73,6 @@ class UserAccountSubscriptionsSettings
         }
 
         echo '</div>';
-
-        // echo '<h4>Website Status</h4>';
-        // [TODO]: Do status here
     }
 
     public function handle_update_subscription_domain($subscription_id)
