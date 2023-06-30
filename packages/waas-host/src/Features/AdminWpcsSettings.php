@@ -8,21 +8,21 @@ class AdminWpcsSettings
 
     public function __construct()
     {
-        add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 11);
+        add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 12);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
         add_filter('wpcs_tenant_ready_email_allowed', [$this, 'allow_tenant_ready_email']);
     }
 
     public function add_wpcs_admin_page()
     {
-        add_menu_page(
-            'WPCS.io',
-            'WPCS.io',
-            'manage_options',
+        add_submenu_page(
             'wpcs-admin',
+            __('WPCS.io settings', WPCS_WAAS_HOST_TEXTDOMAIN),
+            __('Settings', WPCS_WAAS_HOST_TEXTDOMAIN),
+            'manage_options',
+            'wpcs-admin-settings',
             [$this, 'render_wpcs_admin_page'],
-            'dashicons-networking',
-            10);
+        );
     }
 
     public function render_wpcs_admin_page()
