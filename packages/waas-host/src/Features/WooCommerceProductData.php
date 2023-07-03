@@ -106,11 +106,8 @@ class WooCommerceProductData
 
         if (array_key_exists(WPCSProduct::WPCS_PRODUCT_TYPE_META, $_POST))
         {
-            update_post_meta(
-                $post_id,
-                WPCSProduct::WPCS_PRODUCT_TYPE_META,
-                $_POST[WPCSProduct::WPCS_PRODUCT_TYPE_META]
-            );
+            $product = new WPCSProduct($post_id);
+            $product->store_type($_POST[WPCSProduct::WPCS_PRODUCT_TYPE_META]);
         }
 
         if (array_key_exists(WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, $_POST))

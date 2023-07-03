@@ -30,10 +30,22 @@ class WPCSProduct
 
     public function is_wpcs_product()
     {
-        return get_post_meta(
+        $meta_value = get_post_meta(
             $this->post_id,
             '_' . self::IS_WPCS_PRODUCT_META,
             true,
         );
+
+        return $meta_value === 'yes';
+    }
+
+    public function store_type($type)
+    {
+        update_post_meta($this->post_id, self::WPCS_PRODUCT_TYPE_META, $type);
+    }
+
+    public function get_type()
+    {
+        return get_post_meta($this->post_id, self::WPCS_PRODUCT_TYPE_META, true);
     }
 }
