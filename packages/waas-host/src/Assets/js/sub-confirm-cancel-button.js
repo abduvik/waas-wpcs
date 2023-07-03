@@ -13,7 +13,9 @@ jQuery(function($){
     cancelConfirmButton.click(function(){
         cancelConfirmButton.hide();
         dangerousCancelButton
-            .before(`<div class="wpcs-cancel-explanation-button">Are you sure you want to cancel? This is permanent!</div>`)
+            .before(`<div class="wpcs-cancel-explanation-button">
+                Are you sure you want to cancel? This will permanently delete your website.
+            </div>`)
             .html('Yes, cancel my subscription')
             .show();
     });
