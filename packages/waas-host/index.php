@@ -10,7 +10,6 @@ use WaaSHost\Features\TenantsAddOnSubscriptionManager;
 use WaaSHost\Features\TenantsSubscriptionManager;
 use WaaSHost\Features\UserAccountSubscriptionsSettings;
 use WaaSHost\Features\UserWcTenantsCheckout;
-use WaaSHost\Features\AdminWcProductRole;
 use WaaSHost\Features\AdminWpcsSettings;
 use WaaSHost\Features\AdminWpcsHome;
 use WaaSHost\Features\AdminNotices;
@@ -61,12 +60,11 @@ new TenantsSubscriptionManager($wpcsService, $encryptionService);
 new TenantsAddOnSubscriptionManager($wpcsService);
 new AdminWpcsSettings();
 new UserAccountSubscriptionsSettings($wpcsService);
-new AdminWcProductRole($wpcsService);
 new UserWcTenantsCheckout($wpcsService);
 new WPCSTenantStatusService($wpcsService);
 AdminNotices::init();
 AdminWpcsHome::init();
-WooCommerceProductData::init();
+new WooCommerceProductData($wpcsService);
 
 // Integrations
 SubscriptionsForWoocommerceIntegration::init();

@@ -18,4 +18,22 @@ class WPCSProduct
     {
         $this->post_id = $post_id;
     }
+
+    public function store_is_wpcs_product($true_or_false)
+    {
+        update_post_meta(
+            $this->post_id,
+            '_' . self::IS_WPCS_PRODUCT_META,
+            $true_or_false ? 'yes' : 'no',
+        );
+    }
+
+    public function is_wpcs_product()
+    {
+        return get_post_meta(
+            $this->post_id,
+            '_' . self::IS_WPCS_PRODUCT_META,
+            true,
+        );
+    }
 }

@@ -3,22 +3,26 @@
 namespace WaaSHost\Features;
 
 use WaaSHost\Core\WPCSProduct;
-use WaaSHost\Core\WPCSTenant;
+use WaaSHost\Core\WPCSService;
 
 class WooCommerceProductData
 {
     const WPCS_PRODUCT_DATA_TAB_TARGET = 'wpcs-product-settings';
 
-    public static function init()
+    private WPCSService $wpcsService;
+
+    public function __construct(WPCSService $wpcsService)
     {
-        add_filter('woocommerce_product_data_tabs', [__CLASS__, 'register_product_tabs']);
-        add_action('woocommerce_product_data_panels', [__CLASS__, 'display_product_tab_content']);
-        add_action('woocommerce_process_product_meta', [__CLASS__, 'store_product_tab_data']);
-        add_filter('product_type_options', [__CLASS__, 'display_product_type']);
-        add_action('woocommerce_admin_process_product_object', [__CLASS__, 'store_product_type']);
+        $this->wpcsService = $wpcsService;
+
+        add_filter('woocommerce_product_data_tabs', [$this, 'register_product_tabs']);
+        add_action('woocommerce_product_data_panels', [$this, 'display_product_tab_content']);
+        add_action('woocommerce_process_product_meta', [$this, 'store_product_tab_data']);
+        add_filter('product_type_options', [$this, 'display_product_type']);
+        add_action('woocommerce_process_product_meta', [$this, 'store_product_type']);
     }
 
-    public static function register_product_tabs($tabs)
+    public function register_product_tabs($tabs)
     {
         $tabs['wpcs'] = [
             'label' => __('WPCS', WPCS_WAAS_HOST_TEXTDOMAIN),
@@ -30,12 +34,20 @@ class WooCommerceProductData
         return $tabs;
     }
 
-    public static function display_product_tab_content()
+    public function display_product_tab_content()
     {
-        $options = [];
+        $role_options = [];
         foreach (get_option(PluginBootstrap::ROLES_WP_OPTION) as $role_slug => $role_data)
         {
-            $options[$role_slug] = $role_data->title;
+            $role_options[$role_slug] = $role_data->title;
+        }
+
+        $available_groupnames = [
+            '' => _x('None', 'Option name when no tenant snapshot chosen', WPCS_WAAS_HOST_TEXTDOMAIN),
+        ];
+        foreach ($this->wpcsService->get_available_groupnames() as $groupname)
+        {
+            $available_groupnames[$groupname] = $groupname;
         }
 
         ?>
@@ -57,7 +69,7 @@ class WooCommerceProductData
                     'id'            => WPCSProduct::WPCS_PRODUCT_ROLE_META,
                     'label'         => __( 'Role', WPCS_WAAS_HOST_TEXTDOMAIN),
                     'description'   => __( 'Role? But like for a tenant y\'know?', WPCS_WAAS_HOST_TEXTDOMAIN),
-                    'options'  		=> $options,
+                    'options'  		=> $role_options,
                     'desc_tip'    	=> false,
                 ]); ?>
             </div>
@@ -68,11 +80,20 @@ class WooCommerceProductData
                     </a>
                 </p>
             </div>
+            <div>
+                <?php \woocommerce_wp_select([
+                    'id'            => WPCSProduct::WPCS_PRODUCT_GROUPNAME_META,
+                    'label'         => __( 'Tenant Snapshot Groupname', WPCS_WAAS_HOST_TEXTDOMAIN),
+                    'description'   => __( 'The Tenant\'s Snapshot\'s Groupname', WPCS_WAAS_HOST_TEXTDOMAIN),
+                    'options'  		=> $available_groupnames,
+                    'desc_tip'    	=> false,
+                ]); ?>
+            </div>
         </div>
         <?php
     }
 
-    public static function store_product_tab_data($post_id)
+    public function store_product_tab_data($post_id)
     {
         if (array_key_exists(WPCSProduct::WPCS_PRODUCT_ROLE_META, $_POST))
         {
@@ -91,9 +112,18 @@ class WooCommerceProductData
                 $_POST[WPCSProduct::WPCS_PRODUCT_TYPE_META]
             );
         }
+
+        if (array_key_exists(WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, $_POST))
+        {
+            update_post_meta(
+                $post_id,
+                WPCSProduct::WPCS_PRODUCT_GROUPNAME_META,
+                $_POST[WPCSProduct::WPCS_PRODUCT_GROUPNAME_META]
+            );
+        }
     }
 
-    public static function display_product_type($product_type_options)
+    public function display_product_type($product_type_options)
     {
         $product_type_options[WPCSProduct::IS_WPCS_PRODUCT_META] = [
             "id"            => WPCSProduct::IS_WPCS_PRODUCT_META,
@@ -106,15 +136,9 @@ class WooCommerceProductData
         return $product_type_options;
     }
 
-    public static function store_product_type($product)
+    public function store_product_type($post_id)
     {
-        if (array_key_exists(WPCSProduct::IS_WPCS_PRODUCT_META, $_POST))
-        {
-            update_post_meta(
-                $product->get_id(),
-                WPCSProduct::IS_WPCS_PRODUCT_META,
-                isset($_POST[WPCSProduct::IS_WPCS_PRODUCT_META]) ? 'yes' : 'no'
-            );
-        }
+        $wpcs_product = new WPCSProduct($post_id);
+        $wpcs_product->store_is_wpcs_product(isset($_POST[WPCSProduct::IS_WPCS_PRODUCT_META]));
     }
 }
