@@ -65,6 +65,7 @@ new WPCSTenantStatusService($wpcsService);
 AdminNotices::init();
 AdminWpcsHome::init();
 new WooCommerceProductData($wpcsService);
+WaaSHost\Assets\Module::init();
 
 // Integrations
 SubscriptionsForWoocommerceIntegration::init();
