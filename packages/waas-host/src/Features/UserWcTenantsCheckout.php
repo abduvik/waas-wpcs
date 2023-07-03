@@ -5,6 +5,7 @@ namespace WaaSHost\Features;
 use WaaSHost\Core\WPCSTenant;
 use WaaSHost\Core\WPCSService;
 use WaaSHost\Core\InvalidDomainException;
+use WaaSHost\Core\WPCSProduct;
 
 class UserWcTenantsCheckout
 {
@@ -20,17 +21,38 @@ class UserWcTenantsCheckout
 
     public function render_wpcs_checkout_fields($fields)
     {
-        $fields['billing'][WPCSTenant::WPCS_WEBSITE_NAME_META] = [
-            'label' => 'Website Name',
-            'required' => true,
-            'priority' => 30,
-        ];
+        $base_product_in_cart = false;
+
+        $items = \WC()->cart->cart_contents;
+        foreach ($items as $key => $item)
+        {
+            $wpcs_product = new WPCSProduct($item['product_id']);
+            if($wpcs_product->is_wpcs_product())
+            {
+                $base_product_in_cart = true;
+            }
+        }
+
+        if($base_product_in_cart)
+        {
+            $fields['billing'][WPCSTenant::WPCS_WEBSITE_NAME_META] = [
+                'label' => 'Website Name',
+                'required' => true,
+                'priority' => 30,
+            ];
+        }
 
         return $fields;
     }
 
     public function validate_website_name_field($data)
     {
+        if(!array_key_exists(WPCSTenant::WPCS_WEBSITE_NAME_META, $data))
+        {
+            // No website name found after checkout, so never mind then
+            return;
+        }
+
         $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
         if (strlen($tenant_root_domain) === 0) {
             // If there is no tenant root domain, the WPCS platform will handle creating unique
