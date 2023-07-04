@@ -37,7 +37,7 @@ class WooCommerceProductData
     public function display_product_tab_content()
     {
         $role_options = [];
-        foreach (get_option(PluginBootstrap::ROLES_WP_OPTION) as $role_slug => $role_data)
+        foreach (get_option(PluginBootstrap::ROLES_WP_OPTION, []) as $role_slug => $role_data)
         {
             $role_options[$role_slug] = $role_data->title;
         }
