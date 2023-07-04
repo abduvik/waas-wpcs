@@ -34,11 +34,12 @@ class TenantsSubscriptionManager
         $subscription_roles = [];
         foreach ($order_items as $key => $item)
         {
-            $product_role = get_post_meta($item->get_product_id(), WPCSProduct::WPCS_PRODUCT_ROLE_META, true);
-            if (!empty($product_role)) {
+            $product_id = $item->get_product_id();
+            $product_role = get_post_meta($product_id, WPCSProduct::WPCS_PRODUCT_ROLE_META, true);
+            if (!empty($product_role) && (new WPCSProduct($product_id))->is_wpcs_product()) {
                 $subscription_roles[] = $product_role;
             }
-            $group_name = empty($group_name) ? get_post_meta($item->get_product_id(), WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, true) : $group_name;
+            $group_name = empty($group_name) ? get_post_meta($product_id, WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, true) : $group_name;
         }
 
         $website_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_WEBSITE_NAME_META, true));
