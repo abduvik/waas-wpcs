@@ -42,7 +42,7 @@ class WooCommerceProductData
             <div id="<?php echo self::WPCS_PRODUCT_DATA_TAB_TARGET; ?>" class="panel woocommerce_options_panel">
                 <div>
                     <p>
-                        <?php _e("Looks like your API Credentials are not yet setup. Please click the link below to connect this storefont to an Applicaiton on WPCS!",WPCS_WAAS_HOST_TEXTDOMAIN) ?>
+                        <?php _e("Looks like your API Credentials are not yet setup. Please click the link below to connect this storefont to an Applicaiton on WPCS!", WPCS_WAAS_HOST_TEXTDOMAIN) ?>
                     </p>
                     <a href="<?php echo admin_url('/admin.php?page=wpcs-admin-settings') ?>">
                         Setup API Credentials
@@ -50,6 +50,7 @@ class WooCommerceProductData
                 </div>
             </div>
         <?php
+            return;
         }
 
         $role_options = [];

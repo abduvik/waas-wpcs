@@ -89,14 +89,14 @@ class AdminWpcsHome
     public static function render_wpcs_admin_page()
     {
         echo '<h1>WPCS.io Admin</h1>';
-        echo `<p>
+        echo '<p>
                 Welcome to the WPCS Storefront!
-            </p>`;
-        echo `<p>
+            </p>';
+        echo '<p>
                 Before you can sell sites automatically with this Storefront there are a few things that require setup. Down below you can find a list of things to set up in the Storefront here.
                 But maybe even more important is to have something to sell.
                 The Storefront is only useful when connecting it to a WPCS Application that contains a Version (the one with the production label) with the WaaS-Client plugin setup.
-            </p>`;
+            </p>';
 
         $default_checklist = [
             "wpcs_credentials" => [
