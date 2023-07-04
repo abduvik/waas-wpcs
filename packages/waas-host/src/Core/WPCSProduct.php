@@ -39,6 +39,15 @@ class WPCSProduct
         return $meta_value === 'yes';
     }
 
+    public static function get_wpcs_product_meta_query()
+    {
+        return [
+            'key' => '_' . self::IS_WPCS_PRODUCT_META,
+            'value' => 'yes',
+            'compare' => '=',
+        ];
+    }
+
     public function store_type($type)
     {
         update_post_meta($this->post_id, self::WPCS_PRODUCT_TYPE_META, $type);
