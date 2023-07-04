@@ -29,7 +29,6 @@ class SingleLogin
 
     public function guard_generate_single_login_link(WP_REST_Request $request)
     {
-
         $subscription_id = sanitize_text_field($request->get_param('subscription_id'));
         $login_email = $request->get_param('email');
         $order_email = apply_filters('wpcs_subscription_id_email_for_login_guard', '', $subscription_id);
