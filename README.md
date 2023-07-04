@@ -13,10 +13,6 @@ Two plugins used to create a communication between a host and multiple tenants i
 - Tenants domains
 - Single-Sign On
 
-## [YouTube Video](http://www.youtube.com/watch?v=hqpPOjLvIig)
-
-[![Building Monday.com SaaS Clone using WordPress, WooCommerce, WPCS & k8s](http://img.youtube.com/vi/hqpPOjLvIig/0.jpg)](http://www.youtube.com/watch?v=xxxxx "Building Monday.com SaaS Clone using WordPress, WooCommerce, WPCS & k8s")
-
 ## Local Development
 
 ### Required tools
