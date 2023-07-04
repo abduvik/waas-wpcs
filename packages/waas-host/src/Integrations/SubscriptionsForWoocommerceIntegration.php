@@ -9,6 +9,11 @@ class SubscriptionsForWoocommerceIntegration
 {
     public static function init()
     {
+        if (!function_exists('is_plugin_active'))
+        {
+            require_once(ABSPATH . '/wp-admin/includes/plugin.php');
+        }
+
         if(is_plugin_active('subscriptions-for-woocommerce/subscriptions-for-woocommerce.php'))
         {
             add_action('wps_sfw_after_created_subscription', [__CLASS__, 'create_tenant_when_subscription_created'], 10, 2);

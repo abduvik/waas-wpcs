@@ -8,6 +8,11 @@ class WoocommerceSubscriptionsIntegration
 {
     public static function init()
     {
+        if (!function_exists('is_plugin_active'))
+        {
+            require_once(ABSPATH . '/wp-admin/includes/plugin.php');
+        }
+
         if (is_plugin_active('woocommerce-subscriptions/woocommerce-subscriptions.php')) {
             add_action('woocommerce_checkout_subscription_created', [__CLASS__, 'create_tenant_when_subscription_created'], 10, 2);
             add_action('woocommerce_subscription_status_cancelled', [__CLASS__, 'remove_tenant_when_subscription_expired']);
