@@ -75,7 +75,7 @@ class WooCommerceProductData
             </div>
             <div>
                 <p>
-                    <a href="<?php admin_url('admin-post.php?action=wpcs_refresh_roles') ?>">
+                    <a href="<?php echo admin_url('/admin-post.php?action=wpcs_refresh_roles') ?>">
                         Refresh Roles
                     </a>
                 </p>
