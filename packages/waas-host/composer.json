@@ -1,5 +1,5 @@
 {
-  "name": "abduvik/waas-host",
+  "name": "wpcs.io/waas-host",
   "description": "This plugin is used to create tenants on WPCS.io with support of WordPress, WooCommerce, WooCommerce Subscriptions and Self-service Dashboard for WooCommerce Subscriptions",
   "type": "project",
   "autoload": {
@@ -14,8 +14,8 @@
   },
   "authors": [
     {
-      "name": "abduvik",
-      "email": "contact@abdu.dev"
+      "name": "WPCS",
+      "email": "support@wpcs.io"
     }
   ],
   "require-dev": {

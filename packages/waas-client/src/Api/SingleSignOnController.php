@@ -3,20 +3,19 @@
 namespace WaaSClient\Api;
 
 use WaaSClient\Core\DecryptionService;
-use WaaSClient\Features\SecureHostConnectionManager;
 use WaaSClient\Features\PluginBootstrap;
 use WP_Error;
 use WP_REST_Request;
 
 class SingleSignOnController
 {
+    public const TENANT_PUBLIC_KEY = 'TENANT_PUBLIC_KEY';
+    public const WPCS_PUBLIC_KEY_CONST_NAME = 'WPCS_PUBLIC_KEY';
     private DecryptionService $decryptionService;
-    private SecureHostConnectionManager $secureHostConnectionManager;
 
-    public function __construct(DecryptionService $decryptionService, SecureHostConnectionManager $secureHostConnectionManager)
+    public function __construct(DecryptionService $decryptionService)
     {
         $this->decryptionService = $decryptionService;
-        $this->secureHostConnectionManager = $secureHostConnectionManager;
 
         add_action('rest_api_init', [$this, 'register_rest_routes']);
     }
@@ -33,16 +32,16 @@ class SingleSignOnController
     {
         $token_encoded = urlencode($request->get_param('token'));
         $token_decoded = base64_decode(urldecode($token_encoded));
-        $public_key = WAAS_HOST_PUBLIC_KEYS;
 
-        if (empty($public_key) || strpos($public_key, '-----BEGIN PUBLIC KEY-----') !== 0) {
-            $externalId = get_option(PluginBootstrap::EXTERNAL_ID);
-            $this->secureHostConnectionManager->get_tenant_public_id($externalId);
-            $public_key = get_option(SecureHostConnectionManager::TENANT_PUBLIC_KEY);
+        $public_key = '';
+        if (!defined(static::WPCS_PUBLIC_KEY_CONST_NAME)) {
+            $public_key = get_option(static::TENANT_PUBLIC_KEY);
 
-            if (empty($public_key) || strpos($public_key, '-----BEGIN PUBLIC KEY-----') !== 0) {
-                return new WP_Error('Could not fetch Correct Public key from Storefront');
+            if ($public_key === false || empty($public_key)) {
+                return new WP_Error('Cannot determine public key!');
             }
+        } else {
+            $public_key = base64_decode(constant(static::WPCS_PUBLIC_KEY_CONST_NAME));
         }
 
         $data = $this->decryptionService->decrypt($public_key, $token_decoded);
@@ -52,6 +51,18 @@ class SingleSignOnController
         }
 
         $data = json_decode($data);
+
+        $purpose = $data->purpose;
+        if ($purpose !== "login") {
+            return new WP_Error('Token not suitable to log in');
+        }
+
+        $expires_in = $data->expires + 0;
+        $utc_now = gmdate("U") + 0;
+        if ($expires_in  < $utc_now) {
+            return new WP_Error('Token expired');
+        }
+
         $user_email = $data->email;
         $user = get_user_by('email', $user_email);
 

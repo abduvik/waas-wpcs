@@ -3,7 +3,6 @@
 namespace WaaSHost\Api;
 
 use WaaSHost\Features\PluginBootstrap;
-use WC_Order;
 use WaaSHost\Core\EncryptionService;
 use WaaSHost\Core\WPCSTenant;
 use WP_REST_Request;
@@ -30,12 +29,9 @@ class SingleLogin
 
     public function guard_generate_single_login_link(WP_REST_Request $request)
     {
-
         $subscription_id = sanitize_text_field($request->get_param('subscription_id'));
-        $subscription = new \WC_Subscription($subscription_id);
         $login_email = $request->get_param('email');
-        $order = $subscription->get_parent();
-        $order_email = $order->get_billing_email();
+        $order_email = apply_filters('wpcs_subscription_id_email_for_login_guard', '', $subscription_id);
 
         return $login_email === $order_email;
     }
@@ -53,7 +49,9 @@ class SingleLogin
         $private_key = get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_PRIVATE_KEY_META, true);
 
         $login_data = [
-            'email' => $email
+            'email' => $email,
+            'purpose' => 'login',
+            'expires' => gmdate("U") + 1800, // Add half an hour in seconds
         ];
 
         $token = $this->encryptionService->encrypt($private_key, json_encode($login_data));

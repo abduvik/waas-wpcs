@@ -38,7 +38,7 @@ class WPCSService
      */
     public function get_available_groupnames()
     {
-        $snapshots= $this->httpService->get('/v1/snapshots?onlyProductionVersion=true');
+        $snapshots = $this->httpService->get('/v1/snapshots?onlyProductionVersion=true');
         $a = array();
         foreach ($snapshots as $snapshot) {
             if (isset($snapshot->groupName) && !empty($snapshot->groupName) && !in_array($snapshot->groupName, $a)) {
@@ -56,7 +56,7 @@ class WPCSService
             'wordPressUserName' => $args['wordpress_username'],
             'wordPressUserEmail' => $args['wordpress_email'],
             'wordPressUserPassword' => $args['wordpress_password'],
-            'wordPressUserRole' => $args['wordpress_user_role']
+            'wordPressUserRole' => $args['wordpress_user_role'],
         ];
 
         if (isset($args['custom_domain_name'])) {
@@ -67,7 +67,30 @@ class WPCSService
             $payload['groupName'] = $args['group_name'];
         }
 
+        if (isset($args['php_constants'])) {
+            $payload['phpConstants'] = $args['php_constants'];
+        }
+
+        apply_filters('wpcs_tenant_create_payload', $payload);
+
         return $this->httpService->post('/v1/tenants', $payload);
+    }
+
+    public function update_tenant($external_id, $args)
+    {
+        $payload = [];
+
+        if (isset($args['php_constants'])) {
+            $payload['phpConstants'] = $args['php_constants'];
+        }
+
+        if (isset($args['wp_options'])) {
+            $payload['wpOptions'] = $args['wp_options'];
+        }
+
+        apply_filters('wpcs_tenant_update_payload', $payload);
+
+        return $this->httpService->put('/v1/tenants?externalId=' . $external_id, $payload);
     }
 
     public function delete_tenant($args)
@@ -103,5 +126,16 @@ class WPCSService
         }
 
         return json_decode($response['body'])->available;
+    }
+
+    /**
+     * @throws \Exception
+     * 
+     */
+    public function get_tenant_safe($external_id)
+    {
+        $tenant_array = $this->httpService->get('/v1/tenants?externalId=' . $external_id);
+        $tenant = reset($tenant_array);
+        return $tenant !== false ? $tenant : null;
     }
 }

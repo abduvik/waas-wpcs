@@ -1,5 +1,5 @@
 {
-  "name": "abduvik/waas-client",
+  "name": "wpcs.io/waas-client",
   "description": "This plugin is used to handle secure communication between tenant on WPCS and Storefront.",
   "type": "project",
   "autoload": {
@@ -14,8 +14,8 @@
   },
   "authors": [
     {
-      "name": "abduvik",
-      "email": "contact@abdu.dev"
+      "name": "WPCS.io",
+      "email": "support@wpcs.io"
     }
   ],
   "require-dev": {

@@ -29,10 +29,6 @@ class AdminRolesSettings
 
     public function add_roles_page()
     {
-        if (get_option(PluginBootstrap::EXTERNAL_ID, '') !== '') {
-            return;
-        }
-
         add_submenu_page(
             'wpcs-admin-tenant',
             'Roles',
