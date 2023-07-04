@@ -2,6 +2,7 @@
 
 namespace WaaSHost\Integrations;
 
+use WaaSHost\Core\WPCSTenant;
 use WaaSHost\Features\SingleLoginService;
 
 class WoocommerceSubscriptionsIntegration
@@ -18,6 +19,7 @@ class WoocommerceSubscriptionsIntegration
             add_action('woocommerce_subscription_status_cancelled', [__CLASS__, 'remove_tenant_when_subscription_expired']);
             add_action('woocommerce_subscription_details_table', [__CLASS__, 'after_subscription_details_html']);
             add_action('woocommerce_subscription_details_table', [__CLASS__, 'show_login_link']);
+            add_action('woocommerce_subscription_details_table', [__CLASS__, 'show_tenant_status']);
             add_action('ssd_add_simple_product_before_calculate_totals', [__CLASS__, 'on_add_send_update_tenant_user_roles'], 20, 1);
             add_action('wcs_user_removed_item', [__CLASS__, 'on_remove_send_update_tenant_user_roles'], 20, 2);
             add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
@@ -46,6 +48,16 @@ class WoocommerceSubscriptionsIntegration
         $login_link = SingleLoginService::get_login_link($subscription->get_id(), $order);
         $email = $order->get_billing_email();
         echo "<a href='$login_link' target='_blank' class='wpcs-single-login-button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
+    }
+
+    public static function show_tenant_status(\WC_Subscription $subscription)
+    {
+        $tenant = new WPCSTenant($subscription->get_id());
+        ?>
+        <div>
+            Website status: <?php echo $tenant->get_status(); ?>
+        </div>
+        <?php
     }
 
     public static function subscription_id_to_email_filter($value, $subscription_id)
