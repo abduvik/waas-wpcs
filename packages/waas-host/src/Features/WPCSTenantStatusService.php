@@ -68,17 +68,17 @@ class WPCSTenantStatusService
 
                 switch ($current_status) {
                     case WPCSTenant::PROVISIONING:
-                        $tenant = $this->wpcsService->get_tenant_safe($external_id);
-                        if (!isset($tenant)) {
+                        $tenant_data = $this->wpcsService->get_tenant_safe($external_id);
+                        if (!isset($tenant_data)) {
                             error_log('Tenant not set');
                             break;
                         }
 
                         $tenant->update_status(WPCSTenant::LINKING_DOMAIN);
                     case WPCSTenant::LINKING_DOMAIN:
-                        $tenant = $this->wpcsService->get_tenant_safe($external_id);
+                        $tenant_data = $this->wpcsService->get_tenant_safe($external_id);
 
-                        if (!isset($tenant) || $tenant->statusCode === 0 || $target_domain_name !== $tenant->domainName) {
+                        if (!isset($tenant_data) || $tenant_data->statusCode === 0 || $target_domain_name !== $tenant_data->domainName) {
                             break;
                         }
 
