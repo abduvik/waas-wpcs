@@ -53,16 +53,18 @@ class WooCommerceProductData
         ?>
         <div id="<?php echo self::WPCS_PRODUCT_DATA_TAB_TARGET; ?>" class="panel woocommerce_options_panel">
             <div>
-                <?php \woocommerce_wp_select([
-                    'id'            => WPCSProduct::WPCS_PRODUCT_TYPE_META,
-                    'label'         => __( 'Type', WPCS_WAAS_HOST_TEXTDOMAIN),
-                    'description'   => __( 'The type of this product, it\'s self explanatory really..', WPCS_WAAS_HOST_TEXTDOMAIN),
-                    'options'  		=> [
-                        WPCSProduct::WPCS_PRODUCT_TYPE_BASE_PRODUCT => __('Base product', WPCS_WAAS_HOST_TEXTDOMAIN),
-                        WPCSProduct::WPCS_PRODUCT_TYPE_ADDON => __('Add-on', WPCS_WAAS_HOST_TEXTDOMAIN),
-                    ],
-                    'desc_tip'    	=> false,
-                ]); ?>
+                <?php
+                // \woocommerce_wp_select([
+                //     'id'            => WPCSProduct::WPCS_PRODUCT_TYPE_META,
+                //     'label'         => __( 'Type', WPCS_WAAS_HOST_TEXTDOMAIN),
+                //     'description'   => __( 'The type of this product, it\'s self explanatory really..', WPCS_WAAS_HOST_TEXTDOMAIN),
+                //     'options'  		=> [
+                //         WPCSProduct::WPCS_PRODUCT_TYPE_BASE_PRODUCT => __('Base product', WPCS_WAAS_HOST_TEXTDOMAIN),
+                //         WPCSProduct::WPCS_PRODUCT_TYPE_ADDON => __('Add-on', WPCS_WAAS_HOST_TEXTDOMAIN),
+                //     ],
+                //     'desc_tip'    	=> false,
+                // ]);
+                ?>
             </div>
             <div>
                 <?php \woocommerce_wp_select([
