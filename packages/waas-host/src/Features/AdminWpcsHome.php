@@ -16,15 +16,16 @@ class AdminWpcsHome
         add_filter('wpcs_getting_started_checklist', [__CLASS__, 'check_woo_wpcs_product']);
     }
 
-    public static function check_api_creds($checklist_items)
-    {
+    public static function do_api_creds_exist() {
         $region_exists = defined('WPCS_API_REGION') && WPCS_API_REGION !== false;
         $key_exists = defined('WPCS_API_KEY') && WPCS_API_KEY !== false;
         $secret_exists = defined('WPCS_API_SECRET') && WPCS_API_SECRET !== false;
-        $api_creds_filled_out = $region_exists && $key_exists && $secret_exists;
+        return $region_exists && $key_exists && $secret_exists;
+    }
 
-        $checklist_items['wpcs_credentials']['is_done'] = $api_creds_filled_out;
-
+    public static function check_api_creds($checklist_items)
+    {
+        $checklist_items['wpcs_credentials']['is_done'] = static::do_api_creds_exist();
         return $checklist_items;
     }
 
@@ -88,7 +89,14 @@ class AdminWpcsHome
     public static function render_wpcs_admin_page()
     {
         echo '<h1>WPCS.io Admin</h1>';
-        echo '<p>Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It’s not a story the Jedi would tell you. It’s a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life… He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful… the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. Ironic. He could save others from death, but not himself.</p>';
+        echo `<p>
+                Welcome to the WPCS Storefront!
+            </p>`;
+        echo `<p>
+                Before you can sell sites automatically with this Storefront there are a few things that require setup. Down below you can find a list of things to set up in the Storefront here.
+                But maybe even more important is to have something to sell.
+                The Storefront is only useful when connecting it to a WPCS Application that contains a Version (the one with the production label) with the WaaS-Client plugin setup.
+            </p>`;
 
         $default_checklist = [
             "wpcs_credentials" => [
