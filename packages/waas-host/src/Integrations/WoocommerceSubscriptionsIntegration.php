@@ -64,7 +64,7 @@ class WoocommerceSubscriptionsIntegration
     {
         $subscription = new \WC_Subscription($subscription_id);
         $order = $subscription->get_parent();
-        $order->get_billing_email();
+        return $order->get_billing_email();
     }
 
     public static function on_add_send_update_tenant_user_roles(\WC_Subscription $subscription): void
