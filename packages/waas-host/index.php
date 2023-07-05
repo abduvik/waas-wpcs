@@ -74,6 +74,7 @@ SubscriptionsForWoocommerceIntegration::init();
 WoocommerceSubscriptionsIntegration::init();
 
 WaaSHost\Updater\Module::init();
+new WaaSHost\Migrations\Module($wpcsService);
 AddonProductCategory::init();
 Notifications::init();
 
