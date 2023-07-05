@@ -1,0 +1,17 @@
+name: Release plugins
+on:
+  push:
+    branches:
+      - master
+      - dev
+jobs:
+  build:
+    name: Release plugins
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - run: composer install --working-dir=./packages/waas-client
+      - run: composer install --working-dir=./packages/waas-host
+      - run: ./scripts/build.sh
+
