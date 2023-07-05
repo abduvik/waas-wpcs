@@ -17,6 +17,7 @@ define( 'WPCS_WAAS_CLIENT_SLUG', 'wpcs-waas-client' );
 define( 'WPCS_WAAS_CLIENT_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WPCS_WAAS_CLIENT_UPDATE_URI', 'wpcs-waas-client' );
 define( 'WPCS_WAAS_CLIENT_VERSION', '2.0.0' );
+define( 'WPCS_WAAS_CLIENT_TEXTDOMAIN', 'wpcs-waas-client-textdomain' );
 
 use WaaSClient\Api\SingleSignOnController;
 use WaaSClient\Core\DecryptionService;

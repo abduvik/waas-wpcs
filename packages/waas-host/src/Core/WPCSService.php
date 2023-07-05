@@ -2,11 +2,9 @@
 
 namespace WaaSHost\Core;
 
-use Exception;
+use WaaSHost\Core\Exceptions\InvalidApiKeyException;
+use WaaSHost\Core\Exceptions\InvalidDomainException;
 
-class InvalidDomainException extends Exception
-{
-}
 
 class WPCSService
 {
@@ -15,6 +13,23 @@ class WPCSService
     public function __construct(HttpService $httpService)
     {
         $this->httpService = $httpService;
+    }
+
+    public function can_reach_api() {
+        $response = $this->httpService->getraw('/v1/versions');
+        if (is_wp_error($response)) {
+            throw new \Exception("Something went wrong connecting to the API");
+        }
+
+        if (wp_remote_retrieve_response_code($response) == 200) {
+            return true;
+        }
+
+        if (wp_remote_retrieve_response_code($response) == 403) {
+            throw new InvalidApiKeyException("API Key/Secret are not valid");
+        }
+
+        return false;
     }
 
     /**
@@ -117,7 +132,7 @@ class WPCSService
         $url = '/v1/tenants/domains/available?domain=' . $domain;
         $response = $this->httpService->getraw($url);
         if (is_wp_error($response)) {
-            throw new Exception("Something went wrong connecting to the API");
+            throw new \Exception("Something went wrong connecting to the API");
         }
 
 
