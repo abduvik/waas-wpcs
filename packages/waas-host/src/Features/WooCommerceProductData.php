@@ -36,17 +36,19 @@ class WooCommerceProductData
 
     public function display_product_tab_content()
     {
-        $is_wpcs_api_setup = AdminWpcsHome::do_api_creds_exist();
-        if (!$is_wpcs_api_setup) {
+        $can_reach_api = get_option('WPCS_CAN_REACH_API', false);
+        if (!$can_reach_api) {
 ?>
             <div id="<?php echo self::WPCS_PRODUCT_DATA_TAB_TARGET; ?>" class="panel woocommerce_options_panel">
                 <div>
                     <p>
-                        <?php _e("Looks like your API Credentials are not yet setup. Please click the link below to connect this storefont to an Applicaiton on WPCS!", WPCS_WAAS_HOST_TEXTDOMAIN) ?>
+                        <?php _e("Looks like your API Credentials are not yet setup or incorrect. Please click the link below to connect this storefont to an Application on WPCS!", WPCS_WAAS_HOST_TEXTDOMAIN) ?>
                     </p>
-                    <a href="<?php echo admin_url('/admin.php?page=wpcs-admin-settings') ?>">
-                        Setup API Credentials
-                    </a>
+                    <p>
+                        <a href="<?php echo admin_url('/admin.php?page=wpcs-admin-settings') ?>">
+                            Change API Credentials
+                        </a>
+                    </p>
                 </div>
             </div>
         <?php

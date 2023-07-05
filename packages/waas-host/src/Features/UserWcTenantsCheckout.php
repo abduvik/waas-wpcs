@@ -4,7 +4,7 @@ namespace WaaSHost\Features;
 
 use WaaSHost\Core\WPCSTenant;
 use WaaSHost\Core\WPCSService;
-use WaaSHost\Core\InvalidDomainException;
+use WaaSHost\Core\Exceptions\InvalidDomainException;
 use WaaSHost\Core\WPCSProduct;
 
 class UserWcTenantsCheckout

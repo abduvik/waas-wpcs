@@ -2,12 +2,18 @@
 
 namespace WaaSHost\Features;
 
+use WaaSHost\Core\Exceptions\InvalidApiKeyException;
+use WaaSHost\Core\WPCSService;
+
 class AdminWpcsSettings
 {
     const SHOULD_SEND_TENANT_READY_EMAIL_OPTION = 'wpcs_notification_settings_send_tenant_ready_email';
 
-    public function __construct()
+    private WPCSService $wpcsService;
+
+    public function __construct(WPCSService $wpcsService)
     {
+        $this->wpcsService = $wpcsService;
         add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 12);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
         add_filter('wpcs_tenant_ready_email_allowed', [$this, 'allow_tenant_ready_email']);
@@ -27,6 +33,25 @@ class AdminWpcsSettings
 
     public function render_wpcs_admin_page()
     {
+        $is_wpcs_api_setup = AdminWpcsHome::do_api_creds_exist();
+        $can_reach_api = get_option('WPCS_CAN_REACH_API', false);
+
+        if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {
+            if ($is_wpcs_api_setup) {
+                try {
+                    $this->wpcsService->can_reach_api();
+                    update_option('WPCS_CAN_REACH_API', true);
+                    $can_reach_api = true;
+                } catch (\Exception $ei) {
+                    update_option('WPCS_CAN_REACH_API', false);
+                    echo $this->wpcs_could_not_connect_to_api_notice_error();
+                    $can_reach_api = false;
+                }
+            }
+        } elseif ($is_wpcs_api_setup && !$can_reach_api) {
+            echo $this->wpcs_could_not_connect_to_api_notice_error();
+        }
+
         echo '<h1>WPCS.io Admin</h1><form method="POST" action="options.php">';
         settings_fields('wpcs-admin');
         do_settings_sections('wpcs-admin');
@@ -162,5 +187,12 @@ class AdminWpcsSettings
         }
 
         return get_option(self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION, 'off') === 'on';
+    }
+
+    public function wpcs_could_not_connect_to_api_notice_error()
+    {
+        echo '<div class="notice notice-error is-dismissible">
+        <p>Important: your API Key/Secret combination or selected region seem to be incorrect, we could not connect.</p>
+        </div>';
     }
 }

@@ -59,7 +59,7 @@ new RolesController($wpcsService);
 new SingleLogin($encryptionService);
 new TenantsSubscriptionManager($wpcsService, $encryptionService);
 new TenantsAddOnSubscriptionManager($wpcsService);
-new AdminWpcsSettings();
+new AdminWpcsSettings($wpcsService);
 new UserAccountSubscriptionsSettings($wpcsService);
 new UserWcTenantsCheckout($wpcsService);
 new WPCSTenantStatusService($wpcsService);
