@@ -2,12 +2,12 @@
 
 namespace WaaSHost\Features;
 
-use WaaSHost\Core\Exceptions\InvalidApiKeyException;
 use WaaSHost\Core\WPCSService;
 
 class AdminWpcsSettings
 {
     const SHOULD_SEND_TENANT_READY_EMAIL_OPTION = 'wpcs_notification_settings_send_tenant_ready_email';
+    const SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION = 'wpcs_host_setting_remove_admininistrator_plugin_capabilities_on_tenant';
 
     private WPCSService $wpcsService;
 
@@ -17,6 +17,7 @@ class AdminWpcsSettings
         add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 12);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
         add_filter('wpcs_tenant_ready_email_allowed', [$this, 'allow_tenant_ready_email']);
+        add_filter('wpcs_remove_tenant_administrator_plugin_capabilities', [$this, 'remove_tenant_administrator_plugin_capabilities']);
     }
 
     public function add_wpcs_admin_page()
@@ -135,6 +136,44 @@ class AdminWpcsSettings
             ]
         );
 
+        register_setting('wpcs-admin', 'wpcs_host_settings_default_user_role', [
+            'default' => 'administrator',
+            'sanitize_callback' => [$this, 'sanitize_user_role']
+        ]);
+        add_settings_field(
+            'wpcs_host_settings_default_user_role',
+            __("The user role of user that gets created", WPCS_WAAS_HOST_TEXTDOMAIN),
+            [$this, 'render_settings_field'],
+            'wpcs-admin',
+            'wpcs_host_settings',
+            [
+                "id" => "wpcs_host_settings_default_user_role",
+                "title" => __("The user role of user that gets created", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "type" => "text"
+            ]
+        );
+
+        register_setting(
+            'wpcs-admin',
+            self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
+            [
+                'default' => 'on'
+            ]
+        );
+        add_settings_field(
+            self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
+            __('Remove Administrator Plugin Capabilities on tenant creation?', WPCS_WAAS_HOST_TEXTDOMAIN),
+            [$this, 'render_settings_field'],
+            'wpcs-admin',
+            'wpcs_notification_settings',
+            [
+                "id" => self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
+                "title" => __('Remove Administrator Plugin Capabilities on tenant creation?', WPCS_WAAS_HOST_TEXTDOMAIN),
+                "type" => "checkbox",
+                "value" => "on"
+            ]
+        );
+
         add_settings_section(
             'wpcs_notification_settings',
             __('WPCS Notification Settings', WPCS_WAAS_HOST_TEXTDOMAIN),
@@ -189,10 +228,26 @@ class AdminWpcsSettings
         return get_option(self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION, 'off') === 'on';
     }
 
+    function remove_tenant_administrator_plugin_capabilities($allowed)
+    {
+        // If somebody else disallowed, respect their decision.
+        if (!$allowed) {
+            return $allowed;
+        }
+
+        return get_option(self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION, 'off') === 'on';
+    }
+
     public function wpcs_could_not_connect_to_api_notice_error()
     {
         echo '<div class="notice notice-error is-dismissible">
         <p>Important: your API Key/Secret combination or selected region seem to be incorrect, we could not connect.</p>
         </div>';
+    }
+
+    public function sanitize_user_role($value)
+    {
+        $trimmed = trim($value);
+        return empty($trimmed) ? 'administrator' : $trimmed;
     }
 }

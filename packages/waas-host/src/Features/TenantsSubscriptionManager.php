@@ -66,11 +66,12 @@ class TenantsSubscriptionManager
             'wordpress_username' => str_replace('-', '_', sanitize_title_with_dashes(remove_accents($order->get_formatted_billing_full_name()))),
             'wordpress_email' => $order->get_billing_email(),
             'wordpress_password' => $password,
-            'wordpress_user_role' => 'administrator',
+            'wordpress_user_role' => get_option(WPCSTenant::WPCS_DEFAULT_USER_ROLE, 'administrator'),
             'group_name' => ($group_name === false || empty($group_name)) ? null : $group_name,
             'php_constants' => [
                 'WPCS_TENANT_ROLES' => ['value' => implode(",", $subscription_roles), 'isPrivate' => false],
                 'WPCS_PUBLIC_KEY' => ['value' => base64_encode($keys['public_key']), 'isPrivate' => false],
+                'WPCS_TENANT_NO_ADMINISTRATOR_PLUGIN_CAPS' => ['value' => apply_filters('wpcs_remove_tenant_administrator_plugin_capabilities', true)]
             ]
         ];
 
