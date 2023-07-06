@@ -41,7 +41,7 @@ if (!wp_doing_ajax()) {
     new RolesManager();
 
     // Plugin Boostrap
-    new PluginBootstrap();
+    PluginBootstrap::init();
 
     new SingleSignOnController($decryptionService);
 
