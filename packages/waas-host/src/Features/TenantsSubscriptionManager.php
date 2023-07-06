@@ -32,14 +32,28 @@ class TenantsSubscriptionManager
 
         $group_name = "";
         $subscription_roles = [];
-        foreach ($order_items as $key => $item)
-        {
+        $has_wpcs_products = false;
+
+        foreach ($order_items as $key => $item) {
+
             $product_id = $item->get_product_id();
-            $product_role = get_post_meta($product_id, WPCSProduct::WPCS_PRODUCT_ROLE_META, true);
-            if (!empty($product_role) && (new WPCSProduct($product_id))->is_wpcs_product()) {
+            $wpcs_product = new WPCSProduct($product_id);
+
+            if (!$wpcs_product->is_wpcs_product()) {
+                continue;
+            }
+
+            $has_wpcs_products = true;
+
+            $product_role = $wpcs_product->get_role();
+            if (!empty($product_role)) {
                 $subscription_roles[] = $product_role;
             }
-            $group_name = empty($group_name) ? get_post_meta($product_id, WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, true) : $group_name;
+            $group_name = empty($group_name) ? $wpcs_product->get_tenant_snapshot_group_name() : $group_name;
+        }
+
+        if (!$has_wpcs_products) {
+            return;
         }
 
         $website_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_WEBSITE_NAME_META, true));
@@ -61,8 +75,7 @@ class TenantsSubscriptionManager
         ];
 
         $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
-        if ($tenant_root_domain !== '')
-        {
+        if ($tenant_root_domain !== '') {
             $subdomain = sanitize_title_with_dashes(remove_accents($website_name));
             $args['custom_domain_name'] = $subdomain . '.' . $tenant_root_domain;
         }
