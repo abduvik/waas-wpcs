@@ -114,25 +114,18 @@ class WooCommerceProductData
 
     public function store_product_tab_data($post_id)
     {
+        $product = new WPCSProduct($post_id);
+
         if (array_key_exists(WPCSProduct::WPCS_PRODUCT_ROLE_META, $_POST)) {
-            update_post_meta(
-                $post_id,
-                WPCSProduct::WPCS_PRODUCT_ROLE_META,
-                $_POST[WPCSProduct::WPCS_PRODUCT_ROLE_META]
-            );
+            $product->update_role($_POST[WPCSProduct::WPCS_PRODUCT_ROLE_META]);
         }
 
         if (array_key_exists(WPCSProduct::WPCS_PRODUCT_TYPE_META, $_POST)) {
-            $product = new WPCSProduct($post_id);
             $product->store_type($_POST[WPCSProduct::WPCS_PRODUCT_TYPE_META]);
         }
 
         if (array_key_exists(WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, $_POST)) {
-            update_post_meta(
-                $post_id,
-                WPCSProduct::WPCS_PRODUCT_GROUPNAME_META,
-                $_POST[WPCSProduct::WPCS_PRODUCT_GROUPNAME_META]
-            );
+            $product->update_tenant_snapshot_group_name($_POST[WPCSProduct::WPCS_PRODUCT_GROUPNAME_META]);
         }
     }
 

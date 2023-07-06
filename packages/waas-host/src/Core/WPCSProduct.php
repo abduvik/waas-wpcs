@@ -57,4 +57,24 @@ class WPCSProduct
     {
         return get_post_meta($this->post_id, self::WPCS_PRODUCT_TYPE_META, true);
     }
+
+    public function get_role()
+    {
+        return get_post_meta($this->post_id, self::WPCS_PRODUCT_ROLE_META, true);
+    }
+
+    public function update_role($role)
+    {
+        return update_post_meta($this->post_id, self::WPCS_PRODUCT_ROLE_META, $role);
+    }
+
+    public function get_tenant_snapshot_group_name()
+    {
+        return get_post_meta($this->post_id, WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, true);
+    }
+
+    public function update_tenant_snapshot_group_name($group_name)
+    {
+        return update_post_meta($this->post_id, self::WPCS_PRODUCT_GROUPNAME_META, $group_name);
+    }
 }
