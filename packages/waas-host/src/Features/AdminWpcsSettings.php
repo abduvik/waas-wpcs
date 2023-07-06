@@ -165,7 +165,7 @@ class AdminWpcsSettings
             __('Remove Administrator Plugin Capabilities on tenant creation?', WPCS_WAAS_HOST_TEXTDOMAIN),
             [$this, 'render_settings_field'],
             'wpcs-admin',
-            'wpcs_notification_settings',
+            'wpcs_host_settings',
             [
                 "id" => self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
                 "title" => __('Remove Administrator Plugin Capabilities on tenant creation?', WPCS_WAAS_HOST_TEXTDOMAIN),
