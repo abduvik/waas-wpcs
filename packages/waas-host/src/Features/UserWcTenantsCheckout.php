@@ -30,6 +30,7 @@ class UserWcTenantsCheckout
             if($wpcs_product->is_wpcs_product())
             {
                 $base_product_in_cart = true;
+                break;
             }
         }
 

@@ -32,14 +32,28 @@ class TenantsSubscriptionManager
 
         $group_name = "";
         $subscription_roles = [];
-        foreach ($order_items as $key => $item)
-        {
+        $has_wpcs_products = false;
+
+        foreach ($order_items as $key => $item) {
+
             $product_id = $item->get_product_id();
-            $product_role = get_post_meta($product_id, WPCSProduct::WPCS_PRODUCT_ROLE_META, true);
-            if (!empty($product_role) && (new WPCSProduct($product_id))->is_wpcs_product()) {
+            $wpcs_product = new WPCSProduct($product_id);
+
+            if (!$wpcs_product->is_wpcs_product()) {
+                continue;
+            }
+
+            $has_wpcs_products = true;
+
+            $product_role = $wpcs_product->get_role();
+            if (!empty($product_role)) {
                 $subscription_roles[] = $product_role;
             }
-            $group_name = empty($group_name) ? get_post_meta($product_id, WPCSProduct::WPCS_PRODUCT_GROUPNAME_META, true) : $group_name;
+            $group_name = empty($group_name) ? $wpcs_product->get_tenant_snapshot_group_name() : $group_name;
+        }
+
+        if (!$has_wpcs_products) {
+            return;
         }
 
         $website_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_WEBSITE_NAME_META, true));
@@ -52,17 +66,20 @@ class TenantsSubscriptionManager
             'wordpress_username' => str_replace('-', '_', sanitize_title_with_dashes(remove_accents($order->get_formatted_billing_full_name()))),
             'wordpress_email' => $order->get_billing_email(),
             'wordpress_password' => $password,
-            'wordpress_user_role' => 'administrator',
+            'wordpress_user_role' => get_option(WPCSTenant::WPCS_DEFAULT_USER_ROLE, 'administrator'),
             'group_name' => ($group_name === false || empty($group_name)) ? null : $group_name,
             'php_constants' => [
                 'WPCS_TENANT_ROLES' => ['value' => implode(",", $subscription_roles), 'isPrivate' => false],
                 'WPCS_PUBLIC_KEY' => ['value' => base64_encode($keys['public_key']), 'isPrivate' => false],
+                'WPCS_TENANT_NO_ADMINISTRATOR_PLUGIN_CAPS' => [
+                    'value' => apply_filters('wpcs_remove_tenant_administrator_plugin_capabilities', true) ? "true" : "false",
+                    'isPrivate' => false,
+                ]
             ]
         ];
 
         $tenant_root_domain = get_option('wpcs_host_settings_root_domain', '');
-        if ($tenant_root_domain !== '')
-        {
+        if ($tenant_root_domain !== '') {
             $subdomain = sanitize_title_with_dashes(remove_accents($website_name));
             $args['custom_domain_name'] = $subdomain . '.' . $tenant_root_domain;
         }
