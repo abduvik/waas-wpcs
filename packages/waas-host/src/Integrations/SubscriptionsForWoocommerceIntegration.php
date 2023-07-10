@@ -75,6 +75,6 @@ class SubscriptionsForWoocommerceIntegration
 
     public static function get_subscription_detail_page($storefront_url, $subscription_id)
     {
-        return $storefront_url . "/my-account/show-subscription/" . $subscription_id;
+        return "$storefront_url/my-account/show-subscription/$subscription_id";
     }
 }
