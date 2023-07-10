@@ -14,8 +14,7 @@ class Notifications
     public static function send_email_on_tenant_ready($subscription_id)
     {
         $should_send_email = apply_filters('wpcs_tenant_ready_email_allowed', true, $subscription_id);
-        if(!$should_send_email)
-        {
+        if (!$should_send_email) {
             return;
         }
 
@@ -35,17 +34,18 @@ class Notifications
         $storefront_domain = get_site_url();
         $storefront_login_url = "https://{$storefront_domain}/my-account/show-subscription/{$subscription_id}";
 
-        $text = `
+        $text = '
         <!doctype html>
-        <html lang='en'>
+        <html lang=\'en\'>
         <body>
             <p>Hello,</p>
             <p>Good news!</p>
-            <p>You can login to your website <a href="{$domain}">{$domain}</a>! Log into our shop, view your subscription and hit the "Login as {$recipient}" button.</p>
-            <p><strong>Your subscription can be found at</strong>: <a href="$storefront_login_url">$storefront_login_url</a></p>
+            <p>You can login to your website <a href="' . $domain . '">' . $domain . '</a>! Log into our shop, view your subscription and hit the "Login as ' . $recipient . '" button.</p>
+            <p><strong>Your subscription can be found at</strong>: <a href="' . $storefront_login_url . '">' . $storefront_login_url . '</a></p>
+            <p>On your subscription page you can sign in to your website using the <i>Sign in as ' . $recipient . '<i> link.</p>
         </body>
         </html>
-        `;
+        ';
 
         return $text;
     }
