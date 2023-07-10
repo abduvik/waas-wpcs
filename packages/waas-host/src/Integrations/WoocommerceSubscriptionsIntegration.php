@@ -23,6 +23,7 @@ class WoocommerceSubscriptionsIntegration
             add_action('ssd_add_simple_product_before_calculate_totals', [__CLASS__, 'on_add_send_update_tenant_user_roles'], 20, 1);
             add_action('wcs_user_removed_item', [__CLASS__, 'on_remove_send_update_tenant_user_roles'], 20, 2);
             add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
+            add_filter('wpcs_subscription_details_url', [__CLASS__, 'get_subscription_detail_page'], 10, 2);
         }
     }
 
@@ -92,5 +93,10 @@ class WoocommerceSubscriptionsIntegration
         }
 
         do_action('wpcs_tenant_roles_changed', $subscription->get_id(), $subscription_roles);
+    }
+
+    public static function get_subscription_detail_page($storefront_url, $subscription_id)
+    {
+        return "$storefront_url/my-account/view-subscription/$subscription_id/";
     }
 }

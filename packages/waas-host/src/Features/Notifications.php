@@ -31,8 +31,7 @@ class Notifications
     private static function get_ready_email_body($subscription_id, $recipient)
     {
         $domain = get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true);
-        $storefront_domain = get_site_url();
-        $storefront_login_url = "https://{$storefront_domain}/my-account/show-subscription/{$subscription_id}";
+        $storefront_login_url = apply_filters('wpcs_subscription_details_url', get_site_url(), $subscription_id);
 
         $text = '
         <!doctype html>
@@ -40,9 +39,8 @@ class Notifications
         <body>
             <p>Hello,</p>
             <p>Good news!</p>
-            <p>You can login to your website <a href="' . $domain . '">' . $domain . '</a>! Log into our shop, view your subscription and hit the "Login as ' . $recipient . '" button.</p>
+            <p>You can login to your website <a href="' . $domain . '">' . $domain . '</a>! Log into our shop, view your subscription and hit the "Login as ' . $recipient . '" button or link.</p>
             <p><strong>Your subscription can be found at</strong>: <a href="' . $storefront_login_url . '">' . $storefront_login_url . '</a></p>
-            <p>On your subscription page you can sign in to your website using the <i>Sign in as ' . $recipient . '<i> link.</p>
         </body>
         </html>
         ';
