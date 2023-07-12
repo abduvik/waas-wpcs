@@ -50,14 +50,13 @@ define('WPCS_API_SECRET', get_option('wpcs_credentials_api_secret_setting')); //
 // Controllers to list for APIs
 $wpcs_http_service = new HttpService('https://api.' . WPCS_API_REGION . '.wpcs.io', WPCS_API_KEY . ":" . WPCS_API_SECRET);
 $wpcsService = new WPCSService($wpcs_http_service);
-$encryptionService = new EncryptionService();
 new RolesController($wpcsService);
 
 // Managers to list for Events
 
 // UI
-new SingleLogin($encryptionService);
-new TenantsSubscriptionManager($wpcsService, $encryptionService);
+new SingleLogin();
+new TenantsSubscriptionManager($wpcsService);
 new TenantsAddOnSubscriptionManager($wpcsService);
 new AdminWpcsSettings($wpcsService);
 new UserAccountSubscriptionsSettings($wpcsService);

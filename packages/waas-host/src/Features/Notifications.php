@@ -31,7 +31,7 @@ class Notifications
     private static function get_ready_email_body($subscription_id, $recipient)
     {
         $domain = get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true);
-        $storefront_login_url = apply_filters('wpcs_subscription_details_url',get_site_url(), $subscription_id);
+        $storefront_login_url = apply_filters('wpcs_subscription_details_url', get_site_url(), $subscription_id);
 
         $text = '
         <!doctype html>
