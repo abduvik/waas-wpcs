@@ -134,7 +134,7 @@ class AdminWpcsSettings
             'wpcs_host_settings',
             [
                 "id" => "wpcs_host_settings_root_domain",
-                "title" => __("Tenants Root Domain", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("The root domain your customer's tenant will be created with. If you fill out mywaas.com, an example tenant domain will be customer.mywaas.com.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "text"
             ]
         );
@@ -145,13 +145,13 @@ class AdminWpcsSettings
         ]);
         add_settings_field(
             'wpcs_host_settings_default_user_role',
-            __("The user role of user that gets created", WPCS_WAAS_HOST_TEXTDOMAIN),
+            __("Customer user role", WPCS_WAAS_HOST_TEXTDOMAIN),
             [$this, 'render_settings_field'],
             'wpcs-admin',
             'wpcs_host_settings',
             [
                 "id" => "wpcs_host_settings_default_user_role",
-                "title" => __("The user role of user that gets created", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("The role of the user that is created when your customer logs in via the one-click login button in their my-account page.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "text"
             ]
         );
@@ -171,7 +171,7 @@ class AdminWpcsSettings
             'wpcs_host_settings',
             [
                 "id" => self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
-                "title" => __('Remove Administrator Plugin Capabilities on tenant creation?', WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("Check this box if you want the administrator role in your tenants to not be able to manage plugins. Enabling or disabling this will NOT have an effect on existing tenants.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "checkbox",
                 "value" => "on"
             ]
@@ -193,7 +193,7 @@ class AdminWpcsSettings
             'wpcs_notification_settings',
             [
                 "id" => self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION,
-                "title" => __('Send E-mail when tenant is ready?', WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("Whether or not to send the default E-mail to your customer informing them that their tenant is available.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "checkbox",
                 "value" => "on"
             ]
