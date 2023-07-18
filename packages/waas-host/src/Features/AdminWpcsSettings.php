@@ -78,7 +78,8 @@ class AdminWpcsSettings
             'wpcs_credentials',
             [
                 "id" => "wpcs_credentials_region_setting",
-                "title" => __("WPCS Region", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "disabled" => defined('WPCS_API_REGION'),
+                "hint" => defined('WPCS_API_REGION') ? __('Defined as constant', WPCS_WAAS_HOST_TEXTDOMAIN) : "",
                 "type" => "select",
                 "choices" => [
                     'eu1' => __('EU1', WPCS_WAAS_HOST_TEXTDOMAIN),
@@ -96,7 +97,8 @@ class AdminWpcsSettings
             'wpcs_credentials',
             [
                 "id" => "wpcs_credentials_api_key_setting",
-                "title" => __("WPCS API Key", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "disabled" => defined('WPCS_API_KEY'),
+                "hint" => defined('WPCS_API_KEY') ? __('Defined as constant', WPCS_WAAS_HOST_TEXTDOMAIN) : "",
                 "type" => "text"
             ]
         );
@@ -110,7 +112,8 @@ class AdminWpcsSettings
             'wpcs_credentials',
             [
                 "id" => "wpcs_credentials_api_secret_setting",
-                "title" => __("WPCS API Secret", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "disabled" => defined('WPCS_API_SECRET'),
+                "hint" => defined('WPCS_API_SECRET') ? __('Defined as constant', WPCS_WAAS_HOST_TEXTDOMAIN) : "",
                 "type" => "password"
             ]
         );
@@ -199,13 +202,15 @@ class AdminWpcsSettings
 
     function render_settings_field($args)
     {
+        $is_disabled_att = array_key_exists('disabled', $args) && $args['disabled'] ? "disabled" : "";
+
         switch ($args['type']) {
             case 'checkbox':
                 echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' " . checked(get_option($args["id"], "on"), "on", false) . ">";
                 break;
             case 'select':
                 $current_value = get_option($args["id"]);
-                echo "<select id='{$args["id"]}' name='{$args["id"]}'>";
+                echo "<select {$is_disabled_att} id='{$args["id"]}' name='{$args["id"]}'>";
                 foreach ($args['choices'] as $value => $label) {
                     $selected = selected($current_value, $value, false);
                     echo "<option value='{$value}' {$selected}>{$label}</option>";
@@ -213,8 +218,13 @@ class AdminWpcsSettings
                 echo "</select>";
                 break;
             default:
-                echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' value='" . get_option($args["id"]) . "'>";
+                echo "<input {$is_disabled_att} type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' value='" . get_option($args["id"]) . "'>";
                 break;
+        }
+
+        if (array_key_exists('hint', $args))
+        {
+            echo "<span class='wpcs-setting-hint'>{$args['hint']}</span>";
         }
     }
 

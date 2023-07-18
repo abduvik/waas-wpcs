@@ -12,6 +12,7 @@ class Module
     {
         add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_confirm_cancel_button']);
         add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_wpcs_product_data_visibility']);
+        add_action('admin_enqueue_scripts', [__CLASS__, 'enqueue_wpcs_settings_styles']);
     }
 
     public static function enqueue_confirm_cancel_button()
@@ -31,5 +32,13 @@ class Module
         $src = plugin_dir_url( __FILE__ ) . "/js/$script_name";
         $version = date("ymd-Gis", filemtime( plugin_dir_path( __FILE__ ) . "js/$script_name" ));
         wp_enqueue_script('wpcs-product-data-visibility', $src, ['jquery'], $version, true);
+    }
+
+    public static function enqueue_wpcs_settings_styles($hook)
+    {
+        $style_name = 'wpcs-settings.css';
+        $src = plugin_dir_url( __FILE__ ) . "/css/$style_name";
+        $version = date("ymd-Gis", filemtime( plugin_dir_path( __FILE__ ) . "css/$style_name" ));
+        wp_enqueue_style('wpcs-settings-style', $src, [], $version);
     }
 }
