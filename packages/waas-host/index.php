@@ -55,7 +55,7 @@ new RolesController($wpcsService);
 // Managers to list for Events
 
 // UI
-new SingleLogin();
+SingleLogin::init();
 new TenantsSubscriptionManager($wpcsService);
 new TenantsAddOnSubscriptionManager($wpcsService);
 new AdminWpcsSettings($wpcsService);

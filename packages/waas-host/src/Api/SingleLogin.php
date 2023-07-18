@@ -9,7 +9,7 @@ use WP_REST_Request;
 
 class SingleLogin
 {
-    public function init()
+    public static function init()
     {
         add_action('rest_api_init', [__CLASS__, 'register_rest_routes']);
     }
