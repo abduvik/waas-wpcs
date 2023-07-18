@@ -22,34 +22,30 @@ class Notifications
         $order = new \WC_Order($subscription_id);
 
         $recipient = apply_filters('wpcs_tenant_ready_email_recipient', $order->get_billing_email(), $subscription_id);
-        $subject = apply_filters('wpcs_tenant_ready_email_subject', __('Your website is being created', WPCS_WAAS_HOST_TEXTDOMAIN), $subscription_id);
+        $subject = self::get_ready_email_subject($subscription_id, $recipient);
         $headers = apply_filters('wpcs_tenant_ready_email_headers', ['Content-Type: text/html; charset=UTF-8'], $subscription_id);
         $body = self::get_ready_email_body($subscription_id, $recipient);
 
         wp_mail($recipient, $subject, $body, $headers);
     }
 
+    private static function get_ready_email_subject($subscription_id, $recipient)
+    {
+        $unfiltered_subject = apply_filters('wpcs_tenant_ready_email_subject', self::get_default_tenant_ready_subject(), $subscription_id);
+        $replaceables = self::get_replaceables($subscription_id, $recipient);
+        return self::do_replacements($unfiltered_subject, $replaceables);
+    }
+
+    public static function get_default_tenant_ready_subject()
+    {
+        return __('Your website is ready', WPCS_WAAS_HOST_TEXTDOMAIN);
+    }
+
     private static function get_ready_email_body($subscription_id, $recipient)
     {
         $unfiltered_body = apply_filters('wpcs_tenant_ready_email_body', self::get_default_tenant_ready_body(), $subscription_id, $recipient);
-
-        $login_expiry_seconds = 172800;
-        $replaceables = apply_filters('wpcs_tenant_email_replaceables', [
-            "tenant_domain" => "https://" . get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true),
-            "tenant_one_click_login_url" => SingleLogin::get_login_link($subscription_id, $recipient, $login_expiry_seconds),
-            "tenant_one_click_login_url_expires_after" => $login_expiry_seconds / 3600,
-            "storefront_name" => get_bloginfo('name'), 
-            "storefront_url" => get_site_url(),
-            "storefront_subscription_details_url" => apply_filters('wpcs_subscription_details_url', get_site_url(), $subscription_id),
-        ], $subscription_id, $recipient);
-
-        $filtered_body = $unfiltered_body;
-        foreach ($replaceables as $key => $value)
-        {
-            $filtered_body = str_replace([sprintf('{{ %s }}', $key), sprintf('{{%s}}', $key)], $value, $filtered_body);
-        }
-
-        return $filtered_body;
+        $replaceables = self::get_replaceables($subscription_id, $recipient);
+        return self::do_replacements($unfiltered_body, $replaceables);
     }
 
     public static function get_default_tenant_ready_body()
@@ -79,5 +75,29 @@ class Notifications
                 <p>The <a href="{{ storefront_url }}" target="_blank" rel="noopener">{{ storefront_name }}</a> team</p>
             </body>
         </html>';
+    }
+
+    public static function get_replaceables($subscription_id, $recipient)
+    {
+        $login_expiry_seconds = 172800;
+        return apply_filters('wpcs_tenant_email_replaceables', [
+            "tenant_domain" => "https://" . get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true),
+            "tenant_one_click_login_url" => SingleLogin::get_login_link($subscription_id, $recipient, $login_expiry_seconds),
+            "tenant_one_click_login_url_expires_after" => $login_expiry_seconds / 3600,
+            "storefront_name" => get_bloginfo('name'), 
+            "storefront_url" => get_site_url(),
+            "storefront_subscription_details_url" => apply_filters('wpcs_subscription_details_url', get_site_url(), $subscription_id),
+        ], $subscription_id, $recipient);
+    }
+
+    public static function do_replacements($text, $replaceables)
+    {
+        $filtered_body = $text;
+        foreach ($replaceables as $key => $value)
+        {
+            $filtered_body = str_replace([sprintf('{{ %s }}', $key), sprintf('{{%s}}', $key)], $value, $filtered_body);
+        }
+
+        return $filtered_body;
     }
 }

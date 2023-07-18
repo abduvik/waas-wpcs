@@ -19,7 +19,8 @@ class AdminWpcsSettings
         add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 12);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
         add_filter('wpcs_tenant_ready_email_allowed', [$this, 'allow_tenant_ready_email']);
-        add_filter('wpcs_tenant_ready_email_body', [$this, 'tenant_ready_email_body'], 10, 3);
+        add_filter('wpcs_tenant_ready_email_subject', [$this, 'tenant_ready_email_subject'], 10, 1);
+        add_filter('wpcs_tenant_ready_email_body', [$this, 'tenant_ready_email_body'], 10, 1);
         add_filter('wpcs_remove_tenant_administrator_plugin_capabilities', [$this, 'remove_tenant_administrator_plugin_capabilities']);
     }
 
@@ -187,6 +188,25 @@ class AdminWpcsSettings
             'wpcs-admin'
         );
 
+        register_setting('wpcs-admin', self::TENANT_READY_EMAIL_SUBJECT_OPTION);
+        add_settings_field(
+            self::TENANT_READY_EMAIL_SUBJECT_OPTION,
+            __('E-mail subject', WPCS_WAAS_HOST_TEXTDOMAIN),
+            [$this, 'render_settings_field'],
+            'wpcs-admin',
+            'wpcs_notification_settings',
+            [
+                "id" => self::TENANT_READY_EMAIL_SUBJECT_OPTION,
+                "hint" => __("The subject of the E-mail to send to your customer when their tenant is available.", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "type" => "text",
+                "default_value" => Notifications::get_default_tenant_ready_subject(),
+                "styles" => [
+                    "width" => "100%",
+                    "margin-right" => "1em",
+                ]
+            ]
+        );
+
         register_setting('wpcs-admin', self::TENANT_READY_EMAIL_BODY_OPTION);
         add_settings_field(
             self::TENANT_READY_EMAIL_BODY_OPTION,
@@ -240,10 +260,32 @@ class AdminWpcsSettings
                 $current_value = get_option($args['id'], $args['default_value']);
                 wp_editor($current_value, $args['id'], [
                     "media_buttons" => array_key_exists('media_buttons', $args) ? $args['media_buttons'] : false,
+                    "wpautop" => false,
                 ]);
                 break;
             default:
-                echo "<input {$is_disabled_att} type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' value='" . get_option($args["id"]) . "'>";
+                $attributes = [
+                    "type" => $args["type"],
+                    "id" => $args["id"],
+                    "name" => $args["id"],
+                    "value" => get_option($args["id"], array_key_exists('default_value', $args) ? $args['default_value'] : false),
+                ];
+
+                if(array_key_exists('styles', $args))
+                {
+                    $style_strings = array_map(function($att, $value) {
+                        return sprintf('%s:%s;', $att, $value);
+                    }, array_keys($args['styles']), $args['styles']);
+                    $attributes['style'] = join('', $style_strings);
+                }
+
+                $attribute_strings = array_map(function($att, $value) {
+                    return sprintf('%s="%s"', $att, $value);
+                }, array_keys($attributes), $attributes);
+
+                $attribute_string = join(" ", $attribute_strings);
+
+                echo "<input {$is_disabled_att} {$attribute_string} />";
                 break;
         }
 
@@ -273,7 +315,14 @@ class AdminWpcsSettings
         return get_option(self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION, 'off') === 'on';
     }
 
-    function tenant_ready_email_body($text, $subscription_id, $recipient)
+    function tenant_ready_email_subject($text)
+    {
+        $option_val = get_option(self::TENANT_READY_EMAIL_SUBJECT_OPTION);
+
+        return !empty($option_val) ? $option_val : $text;
+    }
+
+    function tenant_ready_email_body($text)
     {
         $option_val = get_option(self::TENANT_READY_EMAIL_BODY_OPTION);
 
