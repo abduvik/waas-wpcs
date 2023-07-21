@@ -47,7 +47,7 @@ define( 'WPCS_WAAS_HOST_TEXTDOMAIN', 'wpcs-waas-host-textdomain' );
 $wpcsConfigService = new ConfigService();
 $wpcs_http_service = new HttpService($wpcsConfigService);
 $wpcsService = new WPCSService($wpcs_http_service);
-new RolesController($wpcsService, $wpcs_http_service);
+new RolesController($wpcsService);
 
 // Managers to list for Events
 
