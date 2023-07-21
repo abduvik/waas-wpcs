@@ -44,10 +44,10 @@ define( 'WPCS_WAAS_HOST_VERSION', '2.1.0' );
 define( 'WPCS_WAAS_HOST_TEXTDOMAIN', 'wpcs-waas-host-textdomain' );
 
 // Controllers to list for APIs
-$wpcs_config_service = new ConfigService();
-$wpcs_http_service = new HttpService($wpcs_config_service);
+$wpcsConfigService = new ConfigService();
+$wpcs_http_service = new HttpService($wpcsConfigService);
 $wpcsService = new WPCSService($wpcs_http_service);
-new RolesController($wpcsService);
+new RolesController($wpcsService, $wpcs_http_service);
 
 // Managers to list for Events
 
@@ -55,12 +55,12 @@ new RolesController($wpcsService);
 SingleLogin::init();
 new TenantsSubscriptionManager($wpcsService);
 new TenantsAddOnSubscriptionManager($wpcsService);
-new AdminWpcsSettings($wpcsService);
 new UserAccountSubscriptionsSettings($wpcsService);
 new UserWcTenantsCheckout($wpcsService);
 new WPCSTenantStatusService($wpcsService);
 AdminNotices::init();
-AdminWpcsHome::init();
+new AdminWpcsHome($wpcsConfigService);
+new AdminWpcsSettings($wpcsService, $wpcsConfigService);
 new WooCommerceProductData($wpcsService);
 new WooCommerceCartValidator();
 WaaSHost\Assets\Module::init();
