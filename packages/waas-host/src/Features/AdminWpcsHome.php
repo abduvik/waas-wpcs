@@ -89,17 +89,17 @@ class AdminWpcsHome
     public static function render_wpcs_admin_page()
     {
         ?>
-        <div style="max-width:50vw">
+        <div style="max-width:50vw" class="wpcs-container">
             <h1>WPCS.io Admin</h1>
-            <p>
-                Welcome to the WPCS Storefront!
-            </p>
-            <p>
-                Before you can sell sites automatically with this Storefront there are a few things that require setup. Down below you can find a list of things to set up in the Storefront here.
-                But maybe even more important is to have something to sell.
-                The Storefront is only useful when connecting it to a WPCS Application that contains a Version (the one with the production label) with the WaaS-Client plugin setup.
-            </p>
-        </div>
+            <section>
+                <h2>Welcome to the WPCS Storefront!</h2>
+                <p>
+                    Before you can sell sites automatically with this Storefront there are a few things that require setup. Down below you can find a list of things to set up in the Storefront here.
+                    But maybe even more important is to have something to sell.
+                    The Storefront is only useful when connecting it to a WPCS Application that contains a Version (the one with the production label) with the WaaS-Client plugin setup. <a href="https://github.com/Daxez/waas-wpcs/releases/latest" target="_blank">You can download the WaaS-Client plugin here.</a>
+                </p>
+
+            </section>
         <?php
 
         $default_checklist = [
@@ -123,30 +123,21 @@ class AdminWpcsHome
         $checklist_items = apply_filters('wpcs_getting_started_checklist', $default_checklist);
 
         ?>
-        <style>
-            ul.ticks {
-               list-style: none;
-            }
-
-            ul.ticks span {
-                position: relative;
-                left: 1em;
-            }
-
-            ul.ticks li.checked:before {
-                content: '\2713';
-            }
-            ul.ticks li.unchecked:before {
-                content: '\25a2';
-            }
-        </style>
-        <ul class="ticks">
-            <?php foreach ($checklist_items as $id => $checklist_item): ?>
-                <li class="<?php echo $checklist_item['is_done'] ? "checked" : "unchecked"; ?>">
-                    <span><?php echo $checklist_item['label'] ?></span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+            <section>
+                <ul class="ticks">
+                    <?php foreach ($checklist_items as $id => $checklist_item): ?>
+                        <li class="<?php echo $checklist_item['is_done'] ? "checked" : "unchecked"; ?>">
+                            <span><?php echo $checklist_item['label'] ?></span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </section>
+            <section>
+                <h2>Tutorial</h2>
+                <p>You can check out our tutorial on <a href="https://wpcs.io/knowledge-base/create-a-waas-storefront-in-less-than-1-hour-with-simple-wp-plugins/" target="_blank">how to set up your WaaS on WPCS.io here</a>, or you can watch the video below.</p>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/YZ1igbOMTT4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            </section>
+        </div>
         <?php
     }
 }
