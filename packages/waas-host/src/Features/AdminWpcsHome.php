@@ -2,34 +2,32 @@
 
 namespace WaaSHost\Features;
 
+use WaaSHost\Core\ConfigService;
 use WaaSHost\Core\WPCSProduct;
 
 class AdminWpcsHome
 {
-    public static function init()
-    {
-        add_action('admin_menu', [__CLASS__, 'add_wpcs_admin_page'], 11);
+    private ConfigService $wpcs_config_service;
 
-        add_filter('wpcs_getting_started_checklist', [__CLASS__, 'check_api_creds']);
-        add_filter('wpcs_getting_started_checklist', [__CLASS__, 'check_required_plugins']);
-        add_filter('wpcs_getting_started_checklist', [__CLASS__, 'check_tenant_roles']);
-        add_filter('wpcs_getting_started_checklist', [__CLASS__, 'check_woo_wpcs_product']);
+    public function __construct($wpcs_config_service)
+    {
+        $this->wpcs_config_service = $wpcs_config_service;
+
+        add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 11);
+
+        add_filter('wpcs_getting_started_checklist', [$this, 'check_api_creds']);
+        add_filter('wpcs_getting_started_checklist', [$this, 'check_required_plugins']);
+        add_filter('wpcs_getting_started_checklist', [$this, 'check_tenant_roles']);
+        add_filter('wpcs_getting_started_checklist', [$this, 'check_woo_wpcs_product']);
     }
 
-    public static function do_api_creds_exist() {
-        $region_exists = defined('WPCS_API_REGION') && WPCS_API_REGION !== false;
-        $key_exists = defined('WPCS_API_KEY') && WPCS_API_KEY !== false;
-        $secret_exists = defined('WPCS_API_SECRET') && WPCS_API_SECRET !== false;
-        return $region_exists && $key_exists && $secret_exists;
-    }
-
-    public static function check_api_creds($checklist_items)
+    public function check_api_creds($checklist_items)
     {
-        $checklist_items['wpcs_credentials']['is_done'] = static::do_api_creds_exist();
+        $checklist_items['wpcs_credentials']['is_done'] = $this->wpcs_config_service->check_credentials();
         return $checklist_items;
     }
 
-    public static function check_required_plugins($checklist_items)
+    public function check_required_plugins($checklist_items)
     {
         // Is WooCommerce installed and active?
         $woocommerce_active = is_plugin_active( 'woocommerce/woocommerce.php');
@@ -42,7 +40,7 @@ class AdminWpcsHome
         return $checklist_items;
     }
 
-    public static function check_tenant_roles($checklist_items)
+    public function check_tenant_roles($checklist_items)
     {
         $roles = get_option(PluginBootstrap::ROLES_WP_OPTION);
         $checklist_items['setup_tenant_roles']['is_done'] = $roles && count(array_keys((array)$roles)) > 0;
@@ -50,7 +48,7 @@ class AdminWpcsHome
         return $checklist_items;
     }
 
-    public static function check_woo_wpcs_product($checklist_items)
+    public function check_woo_wpcs_product($checklist_items)
     {
         $products = get_posts([
             'post_type' => 'product',
@@ -62,7 +60,7 @@ class AdminWpcsHome
         return $checklist_items;
     }
 
-    public static function add_wpcs_admin_page()
+    public function add_wpcs_admin_page()
     {
         $cap = 'manage_options';
         $slug = 'wpcs-admin';
@@ -86,7 +84,7 @@ class AdminWpcsHome
         );
     }
 
-    public static function render_wpcs_admin_page()
+    public function render_wpcs_admin_page()
     {
         ?>
         <div style="max-width:50vw" class="wpcs-container">

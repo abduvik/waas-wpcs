@@ -2,6 +2,7 @@
 
 namespace WaaSHost\Features;
 
+use WaaSHost\Core\ConfigService;
 use WaaSHost\Core\WPCSService;
 
 class AdminWpcsSettings
@@ -12,10 +13,13 @@ class AdminWpcsSettings
     const SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION = 'wpcs_host_setting_remove_admininistrator_plugin_capabilities_on_tenant';
 
     private WPCSService $wpcsService;
+    private ConfigService $wpcsConfigService;
 
-    public function __construct(WPCSService $wpcsService)
+    public function __construct(WPCSService $wpcsService, ConfigService $wpcsConfigService)
     {
         $this->wpcsService = $wpcsService;
+        $this->wpcsConfigService = $wpcsConfigService;
+
         add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 12);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
         add_filter('wpcs_tenant_ready_email_allowed', [$this, 'allow_tenant_ready_email']);
@@ -38,7 +42,7 @@ class AdminWpcsSettings
 
     public function render_wpcs_admin_page()
     {
-        $is_wpcs_api_setup = AdminWpcsHome::do_api_creds_exist();
+        $is_wpcs_api_setup = $this->wpcsConfigService->check_credentials();
         $can_reach_api = get_option('WPCS_CAN_REACH_API', false);
 
         if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {

@@ -2,7 +2,6 @@
 
 namespace WaaSHost\Api;
 
-use WaaSHost\Core\HttpService;
 use WaaSHost\Core\WPCSService;
 use WaaSHost\Features\AdminNotices;
 use WaaSHost\Features\PluginBootstrap;
@@ -49,11 +48,15 @@ class RolesController
             $wpcs_production_version_domain_name = 'https://' . $wpcs_production_version_domain_name;
         }
 
-        $http_service = new HttpService($wpcs_production_version_domain_name);
+        $response = wp_remote_get(trailingslashit($wpcs_production_version_domain_name) . 'wp-content/plugins/waas-client-data/roles.json');
+        $response_code = wp_remote_retrieve_response_code($response);
 
-        $response = $http_service->get('/wp-content/plugins/waas-client-data/roles.json');
+        if(200 !== $response_code) {
+            throw new \Exception('Refreshing roles failed with code '.$response_code);
+        }
 
-        update_option(PluginBootstrap::ROLES_WP_OPTION, $response);
+        $body = json_decode($response['body']);
+        update_option(PluginBootstrap::ROLES_WP_OPTION, $body);
     }
 
     public function update_tenant_roles_list_callback(): \WP_REST_Response

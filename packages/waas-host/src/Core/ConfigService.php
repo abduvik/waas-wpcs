@@ -25,4 +25,12 @@ class ConfigService
         $value = defined('WPCS_API_REGION') ? WPCS_API_REGION : get_option('wpcs_credentials_region_setting');
         return apply_filters('wpcs_settings_api_region', $value);
     }
+
+    public function check_credentials()
+    {
+        $region_exists = $this->get_api_region() !== false;
+        $key_exists = $this->get_api_key() !== false;
+        $secret_exists = $this->get_api_secret() !== false;
+        return $region_exists && $key_exists && $secret_exists;
+    }
 }
