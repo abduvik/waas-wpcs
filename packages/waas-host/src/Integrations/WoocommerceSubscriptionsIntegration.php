@@ -2,6 +2,7 @@
 
 namespace WaaSHost\Integrations;
 
+use WaaSHost\Core\WPCSProduct;
 use WaaSHost\Core\WPCSTenant;
 use WaaSHost\Features\SingleLoginService;
 
@@ -73,7 +74,7 @@ class WoocommerceSubscriptionsIntegration
         $order_items = $subscription->get_items();
         $subscription_roles = [];
         foreach ($order_items as $order_Item) {
-            $product_user_role = get_post_meta($order_Item->get_product_id(), WPCSTenant::WPCS_PRODUCT_ROLE_META, true);
+            $product_user_role = get_post_meta($order_Item->get_product_id(), WPCSProduct::WPCS_PRODUCT_ROLE_META, true);
             $subscription_roles[] = $product_user_role;
         }
         do_action('wpcs_tenant_roles_changed', $subscription->get_id(), $subscription_roles);
@@ -88,7 +89,7 @@ class WoocommerceSubscriptionsIntegration
                 continue;
             }
 
-            $product_user_role = get_post_meta($order_Item->get_product_id(), WPCSTenant::WPCS_PRODUCT_ROLE_META, true);
+            $product_user_role = get_post_meta($order_Item->get_product_id(), WPCSProduct::WPCS_PRODUCT_ROLE_META, true);
             $subscription_roles[] = $product_user_role;
         }
 
