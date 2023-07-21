@@ -4,7 +4,7 @@ namespace WaaSHost\Core;
 
 class EncryptionService
 {
-    public function generate_key_pair(): array
+    public static function generate_key_pair(): array
     {
         $key_resource = openssl_pkey_new([
             "digest_alg" => 'sha512',
@@ -20,7 +20,7 @@ class EncryptionService
         ];
     }
 
-    public function encrypt($private_key, $data)
+    public static function encrypt($private_key, $data)
     {
         openssl_private_encrypt($data, $encrypted, $private_key);
 

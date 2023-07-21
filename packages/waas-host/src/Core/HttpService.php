@@ -9,10 +9,10 @@ class HttpService
     private string $auth_keys;
     private string $base_uri;
 
-    public function __construct(string $base_uri, string $auth_keys = '')
+    public function __construct(ConfigService $config_service)
     {
-        $this->auth_keys = $auth_keys;
-        $this->base_uri = $base_uri;
+        $this->base_uri = 'https://api.' . $config_service->get_api_region() . '.wpcs.io';
+        $this->auth_keys = $config_service->get_api_key() . ":" . $config_service->get_api_secret();
     }
 
     /**

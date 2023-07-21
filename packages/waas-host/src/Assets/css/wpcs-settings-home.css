@@ -1,0 +1,20 @@
+.wpcs-container ul.ticks {
+    list-style: none;
+}
+
+.wpcs-container ul.ticks span {
+    position: relative;
+    left: 1em;
+}
+
+.wpcs-container ul.ticks li.checked:before {
+    content: '\2713';
+}
+
+.wpcs-container ul.ticks li.unchecked:before {
+    content: '\25a2';
+}
+
+.wpcs-container section {
+    margin-top: 2.5em;
+}

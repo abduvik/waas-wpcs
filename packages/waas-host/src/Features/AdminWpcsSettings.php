@@ -7,6 +7,8 @@ use WaaSHost\Core\WPCSService;
 class AdminWpcsSettings
 {
     const SHOULD_SEND_TENANT_READY_EMAIL_OPTION = 'wpcs_notification_settings_send_tenant_ready_email';
+    const TENANT_READY_EMAIL_SUBJECT_OPTION = 'wpcs_notification_settings_tenant_ready_email_subject';
+    const TENANT_READY_EMAIL_BODY_OPTION = 'wpcs_notification_settings_tenant_ready_email_body';
     const SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION = 'wpcs_host_setting_remove_admininistrator_plugin_capabilities_on_tenant';
 
     private WPCSService $wpcsService;
@@ -17,6 +19,8 @@ class AdminWpcsSettings
         add_action('admin_menu', [$this, 'add_wpcs_admin_page'], 12);
         add_action('admin_init', [$this, 'add_wpcs_admin_settings']);
         add_filter('wpcs_tenant_ready_email_allowed', [$this, 'allow_tenant_ready_email']);
+        add_filter('wpcs_tenant_ready_email_subject', [$this, 'tenant_ready_email_subject'], 10, 1);
+        add_filter('wpcs_tenant_ready_email_body', [$this, 'tenant_ready_email_body'], 10, 1);
         add_filter('wpcs_remove_tenant_administrator_plugin_capabilities', [$this, 'remove_tenant_administrator_plugin_capabilities']);
     }
 
@@ -78,7 +82,8 @@ class AdminWpcsSettings
             'wpcs_credentials',
             [
                 "id" => "wpcs_credentials_region_setting",
-                "title" => __("WPCS Region", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "disabled" => defined('WPCS_API_REGION'),
+                "hint" => defined('WPCS_API_REGION') ? __('Defined as constant', WPCS_WAAS_HOST_TEXTDOMAIN) : "",
                 "type" => "select",
                 "choices" => [
                     'eu1' => __('EU1', WPCS_WAAS_HOST_TEXTDOMAIN),
@@ -96,7 +101,8 @@ class AdminWpcsSettings
             'wpcs_credentials',
             [
                 "id" => "wpcs_credentials_api_key_setting",
-                "title" => __("WPCS API Key", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "disabled" => defined('WPCS_API_KEY'),
+                "hint" => defined('WPCS_API_KEY') ? __('Defined as constant', WPCS_WAAS_HOST_TEXTDOMAIN) : "",
                 "type" => "text"
             ]
         );
@@ -110,7 +116,8 @@ class AdminWpcsSettings
             'wpcs_credentials',
             [
                 "id" => "wpcs_credentials_api_secret_setting",
-                "title" => __("WPCS API Secret", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "disabled" => defined('WPCS_API_SECRET'),
+                "hint" => defined('WPCS_API_SECRET') ? __('Defined as constant', WPCS_WAAS_HOST_TEXTDOMAIN) : "",
                 "type" => "password"
             ]
         );
@@ -131,7 +138,7 @@ class AdminWpcsSettings
             'wpcs_host_settings',
             [
                 "id" => "wpcs_host_settings_root_domain",
-                "title" => __("Tenants Root Domain", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("The root domain your customer's tenant will be created with. If you fill out mywaas.com, an example tenant domain will be customer.mywaas.com.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "text"
             ]
         );
@@ -142,13 +149,13 @@ class AdminWpcsSettings
         ]);
         add_settings_field(
             'wpcs_host_settings_default_user_role',
-            __("The user role of user that gets created", WPCS_WAAS_HOST_TEXTDOMAIN),
+            __("Customer user role", WPCS_WAAS_HOST_TEXTDOMAIN),
             [$this, 'render_settings_field'],
             'wpcs-admin',
             'wpcs_host_settings',
             [
                 "id" => "wpcs_host_settings_default_user_role",
-                "title" => __("The user role of user that gets created", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("The role of the user that is created when your customer logs in via the one-click login button in their my-account page.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "text"
             ]
         );
@@ -168,7 +175,7 @@ class AdminWpcsSettings
             'wpcs_host_settings',
             [
                 "id" => self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
-                "title" => __('Remove Administrator Plugin Capabilities on tenant creation?', WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("Check this box if you want the administrator role in your tenants to not be able to manage plugins. Enabling or disabling this will NOT have an effect on existing tenants.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "checkbox",
                 "value" => "on"
             ]
@@ -181,6 +188,41 @@ class AdminWpcsSettings
             'wpcs-admin'
         );
 
+        register_setting('wpcs-admin', self::TENANT_READY_EMAIL_SUBJECT_OPTION);
+        add_settings_field(
+            self::TENANT_READY_EMAIL_SUBJECT_OPTION,
+            __('E-mail subject', WPCS_WAAS_HOST_TEXTDOMAIN),
+            [$this, 'render_settings_field'],
+            'wpcs-admin',
+            'wpcs_notification_settings',
+            [
+                "id" => self::TENANT_READY_EMAIL_SUBJECT_OPTION,
+                "hint" => __("The subject of the E-mail to send to your customer when their tenant is available.", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "type" => "text",
+                "default_value" => Notifications::get_default_tenant_ready_subject(),
+                "styles" => [
+                    "width" => "100%",
+                    "margin-right" => "1em",
+                ]
+            ]
+        );
+
+        register_setting('wpcs-admin', self::TENANT_READY_EMAIL_BODY_OPTION);
+        add_settings_field(
+            self::TENANT_READY_EMAIL_BODY_OPTION,
+            __('E-mail body', WPCS_WAAS_HOST_TEXTDOMAIN),
+            [$this, 'render_settings_field'],
+            'wpcs-admin',
+            'wpcs_notification_settings',
+            [
+                "id" => self::TENANT_READY_EMAIL_BODY_OPTION,
+                "hint" => __("The body of the E-mail to send to your customer when their tenant is available.", WPCS_WAAS_HOST_TEXTDOMAIN),
+                "type" => "html-editor",
+                "media_buttons" => false,
+                "default_value" => Notifications::get_default_tenant_ready_body(),
+            ]
+        );
+
         register_setting('wpcs-admin', self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION);
         add_settings_field(
             self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION,
@@ -190,7 +232,7 @@ class AdminWpcsSettings
             'wpcs_notification_settings',
             [
                 "id" => self::SHOULD_SEND_TENANT_READY_EMAIL_OPTION,
-                "title" => __('Send E-mail when tenant is ready?', WPCS_WAAS_HOST_TEXTDOMAIN),
+                "hint" => __("Whether or not to send the default E-mail to your customer informing them that their tenant is available.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "checkbox",
                 "value" => "on"
             ]
@@ -199,22 +241,57 @@ class AdminWpcsSettings
 
     function render_settings_field($args)
     {
+        $is_disabled_att = array_key_exists('disabled', $args) && $args['disabled'] ? "disabled" : "";
+
         switch ($args['type']) {
             case 'checkbox':
                 echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' " . checked(get_option($args["id"], "on"), "on", false) . ">";
                 break;
             case 'select':
                 $current_value = get_option($args["id"]);
-                echo "<select id='{$args["id"]}' name='{$args["id"]}'>";
+                echo "<select {$is_disabled_att} id='{$args["id"]}' name='{$args["id"]}'>";
                 foreach ($args['choices'] as $value => $label) {
                     $selected = selected($current_value, $value, false);
                     echo "<option value='{$value}' {$selected}>{$label}</option>";
                 }
                 echo "</select>";
                 break;
-            default:
-                echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' value='" . get_option($args["id"]) . "'>";
+            case 'html-editor':
+                $current_value = get_option($args['id'], $args['default_value']);
+                wp_editor($current_value, $args['id'], [
+                    "media_buttons" => array_key_exists('media_buttons', $args) ? $args['media_buttons'] : false,
+                    "wpautop" => false,
+                ]);
                 break;
+            default:
+                $attributes = [
+                    "type" => $args["type"],
+                    "id" => $args["id"],
+                    "name" => $args["id"],
+                    "value" => get_option($args["id"], array_key_exists('default_value', $args) ? $args['default_value'] : false),
+                ];
+
+                if(array_key_exists('styles', $args))
+                {
+                    $style_strings = array_map(function($att, $value) {
+                        return sprintf('%s:%s;', $att, $value);
+                    }, array_keys($args['styles']), $args['styles']);
+                    $attributes['style'] = join('', $style_strings);
+                }
+
+                $attribute_strings = array_map(function($att, $value) {
+                    return sprintf('%s="%s"', $att, $value);
+                }, array_keys($attributes), $attributes);
+
+                $attribute_string = join(" ", $attribute_strings);
+
+                echo "<input {$is_disabled_att} {$attribute_string} />";
+                break;
+        }
+
+        if (array_key_exists('hint', $args))
+        {
+            echo "<span class='wpcs-setting-hint'>{$args['hint']}</span>";
         }
     }
 
@@ -236,6 +313,20 @@ class AdminWpcsSettings
         }
 
         return get_option(self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION, 'off') === 'on';
+    }
+
+    function tenant_ready_email_subject($text)
+    {
+        $option_val = get_option(self::TENANT_READY_EMAIL_SUBJECT_OPTION);
+
+        return !empty($option_val) ? $option_val : $text;
+    }
+
+    function tenant_ready_email_body($text)
+    {
+        $option_val = get_option(self::TENANT_READY_EMAIL_BODY_OPTION);
+
+        return !empty($option_val) ? $option_val : $text;
     }
 
     public function wpcs_could_not_connect_to_api_notice_error()

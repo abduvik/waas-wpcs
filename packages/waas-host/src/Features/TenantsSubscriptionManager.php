@@ -12,12 +12,10 @@ use WC_Order;
 class TenantsSubscriptionManager
 {
     private WPCSService $wpcsService;
-    private EncryptionService $encryptionService;
 
-    public function __construct(WPCSService $wpcsService, EncryptionService $encryptionService)
+    public function __construct(WPCSService $wpcsService)
     {
         $this->wpcsService = $wpcsService;
-        $this->encryptionService = $encryptionService;
 
         add_action('wpcs_subscription_created', [$this, 'create_tenant_when_subscription_created'], 10, 2);
         add_action('wpcs_subscription_expired', [$this, 'remove_tenant_when_subscription_expired']);
@@ -59,7 +57,7 @@ class TenantsSubscriptionManager
         $website_name = sanitize_text_field(get_post_meta($order->get_id(), WPCSTenant::WPCS_WEBSITE_NAME_META, true));
         $password = wp_generate_password();
 
-        $keys = $this->encryptionService->generate_key_pair();
+        $keys = EncryptionService::generate_key_pair();
 
         $args = [
             'name' => $website_name,
