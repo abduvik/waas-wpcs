@@ -3,7 +3,6 @@
 use WaaSHost\Api\RolesController;
 use WaaSHost\Api\SingleLogin;
 use WaaSHost\Core\ConfigService;
-use WaaSHost\Core\EncryptionService;
 use WaaSHost\Core\HttpService;
 use WaaSHost\Core\WPCSService;
 use WaaSHost\Features\PluginBootstrap;
