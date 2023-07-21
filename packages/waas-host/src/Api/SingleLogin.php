@@ -53,11 +53,10 @@ class SingleLogin
         return 'https://' . $domain . "/wp-json/waas-client/v1/single_login/verify?token=" . $token_encoded;
     }
 
-    public function handle_api_one_click_login(WP_REST_Request $request)
+    public static function handle_api_one_click_login(WP_REST_Request $request)
     {
         $subscription_id = $request->get_param('subscription_id');
         $email = $request->get_param('email');
-
 
         wp_redirect(self::get_login_link($subscription_id, $email, 1800));
         exit();
