@@ -181,7 +181,7 @@ class AdminWpcsSettings
                 "id" => self::SHOULD_REMOVE_ADMINISTRATOR_PLUGIN_CAPABILITIES_OPTION,
                 "hint" => __("Check this box if you want the administrator role in your tenants to not be able to manage plugins. Enabling or disabling this will NOT have an effect on existing tenants.", WPCS_WAAS_HOST_TEXTDOMAIN),
                 "type" => "checkbox",
-                "value" => "on"
+                "value" => "off"
             ]
         );
 
@@ -249,7 +249,7 @@ class AdminWpcsSettings
 
         switch ($args['type']) {
             case 'checkbox':
-                echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' " . checked(get_option($args["id"], "on"), "on", false) . ">";
+                echo "<input type='{$args["type"]}' id='{$args["id"]}' name='{$args["id"]}' " . checked(get_option($args["id"], "off"), "on", false) . ">";
                 break;
             case 'select':
                 $current_value = get_option($args["id"]);
