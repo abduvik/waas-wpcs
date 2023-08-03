@@ -14,6 +14,8 @@ class SelfServiceDashboardIntegration
         if (is_plugin_active('self-service-dashboard-for-woocommerce-subscriptions/self-service-dashboard-for-woocommerce-subscriptions.php'))
         {
             add_action('wp_enqueue_scripts', [__CLASS__, 'enqueue_addon_loading_indicator']);
+            add_filter('ssd_add_product_link', [__CLASS__, 'rename_add_new_product_to_add_new_subscription']);
+            add_filter('ssd_product_query_args', [__CLASS__, 'only_show_addons_when_adding_ons'], 10, 1);
         }
     }
 
@@ -26,5 +28,21 @@ class SelfServiceDashboardIntegration
             $version = date("ymd-Gis", filemtime( plugin_dir_path( __FILE__ ) . "assets/js/$script_name" ));
             wp_enqueue_script('add-on-loading-indicator', $src, ['jquery'], $version, true);
         }
+    }
+
+    public static function rename_add_new_product_to_add_new_subscription($link)
+    {
+        return str_replace('Add new product', 'Add new add-on', $link);
+    }
+
+    public static function only_show_addons_when_adding_ons($args)
+    {
+        $args['tax_query'][] = [
+            'taxonomy' => 'product_cat',
+            'field' => 'slug',
+            'terms' => 'add-on',
+        ];
+
+        return $args;
     }
 }

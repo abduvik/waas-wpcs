@@ -10,8 +10,6 @@ class PluginBootstrap
     public function __construct()
     {
         add_action('woocommerce_product_query', [$this, 'hide_addon_products_from_shop_page']);
-        add_filter('ssd_add_product_link', [$this, 'rename_add_new_product_to_add_new_subscription']);
-        add_filter('ssd_product_query_args', [$this, 'only_show_addons_when_adding_ons'], 10, 1);
         add_filter('wcs_can_item_be_removed', [$this, 'only_addons_can_be_removed_from_subscription'], 10, 2);
     }
 
@@ -31,22 +29,6 @@ class PluginBootstrap
         ];
 
         $q->set('tax_query', $tax_query);
-    }
-
-    public function rename_add_new_product_to_add_new_subscription($link)
-    {
-        return str_replace('Add new product', 'Add new add-on', $link);
-    }
-
-    public function only_show_addons_when_adding_ons($args)
-    {
-        $args['tax_query'][] = [
-            'taxonomy' => 'product_cat',
-            'field' => 'slug',
-            'terms' => 'add-on',
-        ];
-
-        return $args;
     }
 
     public function only_addons_can_be_removed_from_subscription(bool $can_remove, \WC_Order_Item_Product $item)
