@@ -32,7 +32,7 @@ class SelfServiceDashboardIntegration
 
     public static function rename_add_new_product_to_add_new_subscription($link)
     {
-        return str_replace('Add new product', 'Add new add-on', $link);
+        return str_replace('Add new product', __('Add new add-on', WPCS_WAAS_HOST_TEXTDOMAIN), $link);
     }
 
     public static function only_show_addons_when_adding_ons($args)
