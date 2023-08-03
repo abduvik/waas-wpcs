@@ -18,6 +18,7 @@ use WaaSHost\Features\Notifications;
 use WaaSHost\Features\WooCommerceCartValidator;
 use WaaSHost\Features\WooCommerceProductData;
 use WaaSHost\Features\WPCSTenantStatusService;
+use WaaSHost\Integrations\SelfServiceDashboard\SelfServiceDashboardIntegration;
 use WaaSHost\Integrations\WoocommerceSubscriptionsIntegration;
 use WaaSHost\Integrations\SubscriptionsForWoocommerceIntegration;
 
@@ -66,6 +67,7 @@ new WooCommerceCartValidator();
 WaaSHost\Assets\Module::init();
 
 // Integrations
+SelfServiceDashboardIntegration::init();
 SubscriptionsForWoocommerceIntegration::init();
 WoocommerceSubscriptionsIntegration::init();
 
