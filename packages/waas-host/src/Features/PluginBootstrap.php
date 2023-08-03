@@ -50,16 +50,25 @@ class PluginBootstrap
         return $args;
     }
 
-    public function only_addons_can_be_removed_from_subscription(bool $can_show, \WC_Order_Item_Product $item)
+    public function only_addons_can_be_removed_from_subscription(bool $can_remove, \WC_Order_Item_Product $item)
     {
+        // Default is true, so if somebody else decided this cannot be removed, honor that.
+        if(!$can_remove) {
+            return $can_remove;
+        }
 
         $product_categories = wc_get_product_terms($item->get_product_id(), 'product_cat');
-        foreach ($product_categories as $product_category) {
-            if ($product_category->slug !== 'add-on') {
-                return false;
+
+        $is_addon = false;
+        foreach ($product_categories as $product_category)
+        {
+            if ($product_category->slug === 'add-on')
+            {
+                $is_addon = true;
             }
         }
-        return $can_show;
+
+        return $is_addon;
     }
 
     public function increase_curl_timeout($timeout): int
