@@ -19,13 +19,24 @@ class WPCSService
 
     public function is_reachable()
     {
-        // Assume that if somebody uses the API constants, they are correct.
-        if (defined('WPCS_API_KEY') && defined('WPCS_API_SECRET') && defined('WPCS_API_REGION'))
+        $can_reach = get_option(self::CAN_REACH_API_OPTION_NAME, false);
+        if($can_reach)
         {
             return true;
         }
 
-        return get_option(self::CAN_REACH_API_OPTION_NAME, false);
+        // Don't assume that if somebody uses the API constants, they are correct.
+        if (defined('WPCS_API_KEY') && defined('WPCS_API_SECRET') && defined('WPCS_API_REGION'))
+        {
+            try {
+                $can_reach = $this->test_reachability();
+                $this->update_is_reachable($can_reach);
+            } catch (\Throwable $th) {
+                $this->update_is_reachable(false);
+            }
+        }
+
+        return $can_reach;
     }
 
     public function update_is_reachable($is_reachable)
