@@ -36,8 +36,7 @@ class WooCommerceProductData
 
     public function display_product_tab_content()
     {
-        $can_reach_api = get_option('WPCS_CAN_REACH_API', false);
-        if (!$can_reach_api) {
+        if (!$this->wpcsService->is_reachable()) {
 ?>
             <div id="<?php echo self::WPCS_PRODUCT_DATA_TAB_TARGET; ?>" class="panel woocommerce_options_panel">
                 <div>

@@ -45,21 +45,18 @@ class AdminWpcsSettings
     public function render_wpcs_admin_page()
     {
         $is_wpcs_api_setup = $this->wpcsConfigService->check_credentials();
-        $can_reach_api = get_option('WPCS_CAN_REACH_API', false);
 
         if (isset($_GET['settings-updated']) && $_GET['settings-updated']) {
             if ($is_wpcs_api_setup) {
                 try {
-                    $this->wpcsService->can_reach_api();
-                    update_option('WPCS_CAN_REACH_API', true);
-                    $can_reach_api = true;
+                    $this->wpcsService->test_reachability();
+                    $this->wpcsService->update_is_reachable(true);
                 } catch (\Exception $ei) {
-                    update_option('WPCS_CAN_REACH_API', false);
+                    $this->wpcsService->update_is_reachable(false);
                     echo $this->wpcs_could_not_connect_to_api_notice_error();
-                    $can_reach_api = false;
                 }
             }
-        } elseif ($is_wpcs_api_setup && !$can_reach_api) {
+        } elseif ($is_wpcs_api_setup && !$this->wpcsService->is_reachable()) {
             echo $this->wpcs_could_not_connect_to_api_notice_error();
         }
 
