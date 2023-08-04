@@ -36,8 +36,7 @@ class WooCommerceProductData
 
     public function display_product_tab_content()
     {
-        $can_reach_api = get_option('WPCS_CAN_REACH_API', false);
-        if (!$can_reach_api) {
+        if (!$this->wpcsService->is_reachable()) {
 ?>
             <div id="<?php echo self::WPCS_PRODUCT_DATA_TAB_TARGET; ?>" class="panel woocommerce_options_panel">
                 <div>
@@ -46,7 +45,7 @@ class WooCommerceProductData
                     </p>
                     <p>
                         <a href="<?php echo admin_url('/admin.php?page=wpcs-admin-settings') ?>">
-                            Change API Credentials
+                            <?php _e('Change API Credentials', WPCS_WAAS_HOST_TEXTDOMAIN); ?>
                         </a>
                     </p>
                 </div>
@@ -95,7 +94,7 @@ class WooCommerceProductData
             <div>
                 <p>
                     <a href="<?php echo admin_url('/admin-post.php?action=wpcs_refresh_roles') ?>">
-                        Refresh Roles
+                        <?php _e('Refresh Roles', WPCS_WAAS_HOST_TEXTDOMAIN); ?>
                     </a>
                 </p>
             </div>

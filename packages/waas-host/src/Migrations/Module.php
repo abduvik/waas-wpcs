@@ -58,11 +58,11 @@ class Module
     {
         $can_reach = false;
         try {
-            $this->wpcsService->can_reach_api();
+            $this->wpcsService->test_reachability();
             $can_reach = true;
         } catch (\Exception $e) {
         }
 
-        update_option('WPCS_CAN_REACH_API', $can_reach);
+        $this->wpcsService->update_is_reachable($can_reach);
     }
 }

@@ -8,6 +8,8 @@ use WaaSHost\Core\Exceptions\InvalidDomainException;
 
 class WPCSService
 {
+    const CAN_REACH_API_OPTION_NAME = 'WPCS_CAN_REACH_API';
+
     private HttpService $httpService;
 
     public function __construct(HttpService $httpService)
@@ -15,7 +17,34 @@ class WPCSService
         $this->httpService = $httpService;
     }
 
-    public function can_reach_api() {
+    public function is_reachable()
+    {
+        $can_reach = get_option(self::CAN_REACH_API_OPTION_NAME, false);
+        if($can_reach)
+        {
+            return true;
+        }
+
+        // Don't assume that if somebody uses the API constants, they are correct.
+        if (defined('WPCS_API_KEY') && defined('WPCS_API_SECRET') && defined('WPCS_API_REGION'))
+        {
+            try {
+                $can_reach = $this->test_reachability();
+                $this->update_is_reachable($can_reach);
+            } catch (\Throwable $th) {
+                $this->update_is_reachable(false);
+            }
+        }
+
+        return $can_reach;
+    }
+
+    public function update_is_reachable($is_reachable)
+    {
+        update_option(self::CAN_REACH_API_OPTION_NAME, $is_reachable);
+    }
+
+    public function test_reachability() {
         $response = $this->httpService->getraw('/v1/versions');
         if (is_wp_error($response)) {
             throw new \Exception("Something went wrong connecting to the API");

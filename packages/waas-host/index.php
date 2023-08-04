@@ -18,6 +18,7 @@ use WaaSHost\Features\Notifications;
 use WaaSHost\Features\WooCommerceCartValidator;
 use WaaSHost\Features\WooCommerceProductData;
 use WaaSHost\Features\WPCSTenantStatusService;
+use WaaSHost\Integrations\SelfServiceDashboard\SelfServiceDashboardIntegration;
 use WaaSHost\Integrations\WoocommerceSubscriptionsIntegration;
 use WaaSHost\Integrations\SubscriptionsForWoocommerceIntegration;
 
@@ -25,14 +26,14 @@ require_once 'vendor/autoload.php';
 
 /**
  * @package WaaSHost
- * @version 2.1.3
+ * @version 2.1.7
  */
 /*
 Plugin Name: WaaS Host
 Plugin URI: https://github.com/Daxez/waas-wpcs
 Description: This plugin is used to create tenants on WPCS.io with support of WordPress, WooCommerce, WooCommerce Subscriptions and Self-service Dashboard for WooCommerce Subscriptions.
 Author: WPCS
-Version: 2.1.3
+Version: 2.1.7
 Author URI: https://wpcs.io
 Update URI: wpcs-waas-host
 */
@@ -40,7 +41,7 @@ Update URI: wpcs-waas-host
 define( 'WPCS_WAAS_HOST_SLUG', 'wpcs-waas-host' );
 define( 'WPCS_WAAS_HOST_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WPCS_WAAS_HOST_UPDATE_URI', 'wpcs-waas-host' );
-define( 'WPCS_WAAS_HOST_VERSION', '2.1.3' );
+define( 'WPCS_WAAS_HOST_VERSION', '2.1.7' );
 define( 'WPCS_WAAS_HOST_TEXTDOMAIN', 'wpcs-waas-host-textdomain' );
 
 // Controllers to list for APIs
@@ -66,6 +67,7 @@ new WooCommerceCartValidator();
 WaaSHost\Assets\Module::init();
 
 // Integrations
+SelfServiceDashboardIntegration::init();
 SubscriptionsForWoocommerceIntegration::init();
 WoocommerceSubscriptionsIntegration::init();
 
