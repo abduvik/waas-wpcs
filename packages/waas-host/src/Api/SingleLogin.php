@@ -25,11 +25,17 @@ class SingleLogin
 
     public static function guard_generate_single_login_link(WP_REST_Request $request)
     {
-        $subscription_id = sanitize_text_field($request->get_param('subscription_id'));
-        $login_email = $request->get_param('email');
-        $order_email = apply_filters('wpcs_subscription_id_email_for_login_guard', '', $subscription_id);
+        $current_user = wp_get_current_user();
+        if (!$current_user->exists()) {
+            return false;
+        }
 
-        return $login_email === $order_email;
+        $current_user_id = $current_user->ID;
+        $subscription_id = sanitize_text_field($request->get_param('subscription_id'));
+
+        $order_customer_id = apply_filters('wpcs_get_customer_id_by_subscription_id_for_login_guard', '', $subscription_id);
+
+        return $current_user_id === $order_customer_id;
     }
 
     public static function get_login_link($subscription_id, $email, $expiry_delay_in_seconds)
@@ -56,9 +62,9 @@ class SingleLogin
     public static function handle_api_one_click_login(WP_REST_Request $request)
     {
         $subscription_id = $request->get_param('subscription_id');
-        $email = $request->get_param('email');
+        $current_user = wp_get_current_user();
 
-        wp_redirect(self::get_login_link($subscription_id, $email, 1800));
+        wp_redirect(self::get_login_link($subscription_id, $current_user->user_email, 1800));
         exit();
     }
 }
