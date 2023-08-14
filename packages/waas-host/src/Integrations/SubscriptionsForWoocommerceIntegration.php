@@ -81,7 +81,7 @@ class SubscriptionsForWoocommerceIntegration
         <tr>
             <td colspan="2">
                 <a href='<?php echo $login_link; ?>' target='_blank' class="wpcs-single-login-button">
-                    Login as <?php echo $order->get_billing_email(); ?>
+                    Login as <?php echo SingleLoginService::get_formatted_username($subscription_id); ?>
                 </a>
             </td>
         </tr>

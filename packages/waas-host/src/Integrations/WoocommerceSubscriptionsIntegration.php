@@ -47,10 +47,11 @@ class WoocommerceSubscriptionsIntegration
 
     public static function show_login_link(\WC_Subscription $subscription)
     {
-        $order = $order = $subscription->get_parent();
-        $login_link = SingleLoginService::get_login_link($subscription->get_id(), $order);
-        $email = $order->get_billing_email();
-        echo "<a href='$login_link' target='_blank' class='wpcs-single-login-button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
+        $order = $subscription->get_parent();
+        $subscription_id = $subscription->get_id();
+        $login_link = SingleLoginService::get_login_link($subscription_id, $order);
+        $username = SingleLoginService::get_formatted_username($subscription_id);
+        echo "<a href='$login_link' target='_blank' class='wpcs-single-login-button'>Login as: $username <span class='dashicons dashicons-admin-network'></span></a>";
     }
 
     public static function show_tenant_status(\WC_Subscription $subscription)
