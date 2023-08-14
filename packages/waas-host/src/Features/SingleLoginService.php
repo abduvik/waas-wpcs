@@ -10,7 +10,7 @@ class SingleLoginService
         return str_replace('-', '_', sanitize_title_with_dashes(remove_accents($username)));
     }
 
-    public static function get_login_link($subscription_id, \WC_Order $order)
+    public static function get_login_link($subscription_id)
     {
         return '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription_id . "&_wpnonce=" . wp_create_nonce('wp_rest');
     }
