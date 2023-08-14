@@ -104,7 +104,6 @@ class TenantsSubscriptionManager
     public function remove_tenant_when_subscription_expired($subscription_id)
     {
         $tenant_external_id = get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, true);
-        error_log($tenant_external_id);
         $this->wpcsService->delete_tenant([
             'external_id' => $tenant_external_id
         ]);
