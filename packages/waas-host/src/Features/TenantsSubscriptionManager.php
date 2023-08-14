@@ -61,7 +61,7 @@ class TenantsSubscriptionManager
 
         $args = [
             'name' => $website_name,
-            'wordpress_username' => str_replace('-', '_', sanitize_title_with_dashes(remove_accents($order->get_formatted_billing_full_name()))),
+            'wordpress_username' => SingleLoginService::get_formatted_username($subscription_id),
             'wordpress_email' => $order->get_billing_email(),
             'wordpress_password' => $password,
             'wordpress_user_role' => get_option(WPCSTenant::WPCS_DEFAULT_USER_ROLE),

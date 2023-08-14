@@ -23,7 +23,7 @@ class WoocommerceSubscriptionsIntegration
             add_action('ssd_add_simple_product_before_calculate_totals', [__CLASS__, 'on_add_send_update_tenant_user_roles'], 20, 1);
             add_action('wcs_user_removed_item', [__CLASS__, 'on_remove_send_update_tenant_user_roles'], 20, 2);
             add_filter('wpcs_get_customer_id_by_subscription_id_for_login_guard', [__CLASS__, 'subscription_id_to_customer_id'], 10, 2);
-            add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
+            add_filter('wpcs_get_customer_username_by_subscription_id', [__CLASS__, 'subscription_id_to_customer_username'], 10, 2);
             add_filter('wpcs_subscription_details_url', [__CLASS__, 'get_subscription_detail_page'], 10, 2);
         }
     }
@@ -75,6 +75,13 @@ class WoocommerceSubscriptionsIntegration
         $subscription = new \WC_Subscription($subscription_id);
         $order = $subscription->get_parent();
         return $order->get_customer_id();
+    }
+
+    public static function subscription_id_to_customer_username($value, $subscription_id)
+    {
+        $subscription = new \WC_Subscription($subscription_id);
+        $order = $subscription->get_parent();
+        return $order->get_formatted_billing_full_name();
     }
 
     public static function on_add_send_update_tenant_user_roles(\WC_Subscription $subscription): void

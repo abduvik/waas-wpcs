@@ -5,6 +5,7 @@ namespace WaaSHost\Api;
 use WaaSHost\Features\PluginBootstrap;
 use WaaSHost\Core\EncryptionService;
 use WaaSHost\Core\WPCSTenant;
+use WaaSHost\Features\SingleLoginService;
 use WP_REST_Request;
 
 class SingleLogin
@@ -38,7 +39,7 @@ class SingleLogin
         return $current_user_id === $order_customer_id;
     }
 
-    public static function get_login_link($subscription_id, $email, $expiry_delay_in_seconds)
+    public static function get_login_link($subscription_id, $expiry_delay_in_seconds)
     {
         $domain = get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true);
         $base_domain = get_post_meta($subscription_id, WPCSTenant::WPCS_BASE_DOMAIN_NAME_META, true);
@@ -48,7 +49,7 @@ class SingleLogin
         $private_key = get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_PRIVATE_KEY_META, true);
 
         $login_data = [
-            'email' => $email,
+            'username' => SingleLoginService::get_formatted_username($subscription_id),
             'purpose' => 'login',
             'expires' => gmdate("U") + $expiry_delay_in_seconds, // Add half an hour in seconds
         ];
@@ -62,9 +63,7 @@ class SingleLogin
     public static function handle_api_one_click_login(WP_REST_Request $request)
     {
         $subscription_id = $request->get_param('subscription_id');
-        $current_user = wp_get_current_user();
-
-        wp_redirect(self::get_login_link($subscription_id, $current_user->user_email, 1800));
+        wp_redirect(self::get_login_link($subscription_id, 1800));
         exit();
     }
 }
