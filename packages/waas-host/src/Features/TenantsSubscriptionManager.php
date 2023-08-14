@@ -26,6 +26,12 @@ class TenantsSubscriptionManager
      */
     public function create_tenant_when_subscription_created($subscription_id, WC_Order $order)
     {
+        // abort early if the subscription already has a tenant external ID
+        if(empty(get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, true)))
+        {
+            return;
+        }
+
         $order_items = $order->get_items();
 
         $group_name = "";
