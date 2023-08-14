@@ -12,6 +12,6 @@ class SingleLoginService
 
     public static function get_login_link($subscription_id)
     {
-        return '/wp-json/' . PluginBootstrap::API_V1_NAMESPACE . '/tenant/single_login?subscription_id=' . $subscription_id . "&_wpnonce=" . wp_create_nonce('wp_rest');
+        return get_rest_url(null, PluginBootstrap::API_V1_NAMESPACE) . '/tenant/single_login?subscription_id=' . $subscription_id . "&_wpnonce=" . wp_create_nonce('wp_rest');
     }
 }
