@@ -19,6 +19,7 @@ class SubscriptionsForWoocommerceIntegration
             add_action('wps_sfw_after_subscription_details', [__CLASS__, 'ater_subscription_details_html'], 100);
             add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
             add_filter('wpcs_get_customer_id_by_subscription_id_for_login_guard', [__CLASS__, 'subscription_id_to_customer_id'], 10, 2);
+            add_filter('wpcs_get_customer_username_by_subscription_id', [__CLASS__, 'subscription_id_to_customer_username'], 10, 2);
             add_filter('wps_sfw_subscription_details_html', [__CLASS__, 'show_tenant_status'], 10, 1);
             add_filter('wps_sfw_subscription_details_html', [__CLASS__, 'show_login_link'], 10, 1);
             add_filter('wpcs_subscription_details_url', [__CLASS__, 'get_subscription_detail_page'], 10, 2);
@@ -54,6 +55,13 @@ class SubscriptionsForWoocommerceIntegration
         return $parent_order->get_customer_id();
     }
 
+    public static function subscription_id_to_customer_username($value, $subscription_id)
+    {
+        $order = new \WC_Order($subscription_id);
+        $parent_order = new \WC_Order($order->get_parent_id());
+        return $parent_order->get_formatted_billing_full_name();
+    }
+
     public static function show_tenant_status($subscription_id)
     {
         $tenant = new WPCSTenant($subscription_id);
@@ -73,7 +81,7 @@ class SubscriptionsForWoocommerceIntegration
         <tr>
             <td colspan="2">
                 <a href='<?php echo $login_link; ?>' target='_blank' class="wpcs-single-login-button">
-                    Login as <?php echo $order->get_billing_email(); ?>
+                    Login as <?php echo SingleLoginService::get_formatted_username($subscription_id); ?>
                 </a>
             </td>
         </tr>

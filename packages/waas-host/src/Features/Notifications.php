@@ -82,7 +82,7 @@ class Notifications
         $login_expiry_seconds = 172800;
         return apply_filters('wpcs_tenant_email_replaceables', [
             "tenant_domain" => "https://" . get_post_meta($subscription_id, WPCSTenant::WPCS_DOMAIN_NAME_META, true),
-            "tenant_one_click_login_url" => SingleLogin::get_login_link($subscription_id, $recipient, $login_expiry_seconds),
+            "tenant_one_click_login_url" => SingleLogin::get_login_link($subscription_id, $login_expiry_seconds),
             "tenant_one_click_login_url_expires_after" => $login_expiry_seconds / 3600,
             "storefront_name" => get_bloginfo('name'), 
             "storefront_url" => get_site_url(),

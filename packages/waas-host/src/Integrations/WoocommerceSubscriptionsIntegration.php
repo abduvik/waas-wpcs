@@ -23,7 +23,7 @@ class WoocommerceSubscriptionsIntegration
             add_action('ssd_add_simple_product_before_calculate_totals', [__CLASS__, 'on_add_send_update_tenant_user_roles'], 20, 1);
             add_action('wcs_user_removed_item', [__CLASS__, 'on_remove_send_update_tenant_user_roles'], 20, 2);
             add_filter('wpcs_get_customer_id_by_subscription_id_for_login_guard', [__CLASS__, 'subscription_id_to_customer_id'], 10, 2);
-            add_filter('wpcs_subscription_id_email_for_login_guard', [__CLASS__, 'subscription_id_to_email_filter'], 10, 2);
+            add_filter('wpcs_get_customer_username_by_subscription_id', [__CLASS__, 'subscription_id_to_customer_username'], 10, 2);
             add_filter('wpcs_subscription_details_url', [__CLASS__, 'get_subscription_detail_page'], 10, 2);
         }
     }
@@ -47,10 +47,11 @@ class WoocommerceSubscriptionsIntegration
 
     public static function show_login_link(\WC_Subscription $subscription)
     {
-        $order = $order = $subscription->get_parent();
-        $login_link = SingleLoginService::get_login_link($subscription->get_id(), $order);
-        $email = $order->get_billing_email();
-        echo "<a href='$login_link' target='_blank' class='wpcs-single-login-button'>Login as: $email <span class='dashicons dashicons-admin-network'></span></a>";
+        $order = $subscription->get_parent();
+        $subscription_id = $subscription->get_id();
+        $login_link = SingleLoginService::get_login_link($subscription_id, $order);
+        $username = SingleLoginService::get_formatted_username($subscription_id);
+        echo "<a href='$login_link' target='_blank' class='wpcs-single-login-button'>Login as: $username <span class='dashicons dashicons-admin-network'></span></a>";
     }
 
     public static function show_tenant_status(\WC_Subscription $subscription)
@@ -75,6 +76,13 @@ class WoocommerceSubscriptionsIntegration
         $subscription = new \WC_Subscription($subscription_id);
         $order = $subscription->get_parent();
         return $order->get_customer_id();
+    }
+
+    public static function subscription_id_to_customer_username($value, $subscription_id)
+    {
+        $subscription = new \WC_Subscription($subscription_id);
+        $order = $subscription->get_parent();
+        return $order->get_formatted_billing_full_name();
     }
 
     public static function on_add_send_update_tenant_user_roles(\WC_Subscription $subscription): void

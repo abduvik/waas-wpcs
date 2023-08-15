@@ -26,6 +26,12 @@ class TenantsSubscriptionManager
      */
     public function create_tenant_when_subscription_created($subscription_id, WC_Order $order)
     {
+        // abort early if the subscription already has a tenant external ID
+        if(!empty(get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, true)))
+        {
+            return;
+        }
+
         $order_items = $order->get_items();
 
         $group_name = "";
@@ -61,7 +67,7 @@ class TenantsSubscriptionManager
 
         $args = [
             'name' => $website_name,
-            'wordpress_username' => str_replace('-', '_', sanitize_title_with_dashes(remove_accents($order->get_formatted_billing_full_name()))),
+            'wordpress_username' => SingleLoginService::get_formatted_username($subscription_id),
             'wordpress_email' => $order->get_billing_email(),
             'wordpress_password' => $password,
             'wordpress_user_role' => get_option(WPCSTenant::WPCS_DEFAULT_USER_ROLE),
@@ -98,7 +104,6 @@ class TenantsSubscriptionManager
     public function remove_tenant_when_subscription_expired($subscription_id)
     {
         $tenant_external_id = get_post_meta($subscription_id, WPCSTenant::WPCS_TENANT_EXTERNAL_ID_META, true);
-        error_log($tenant_external_id);
         $this->wpcsService->delete_tenant([
             'external_id' => $tenant_external_id
         ]);

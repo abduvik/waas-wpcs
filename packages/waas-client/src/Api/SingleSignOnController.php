@@ -63,8 +63,8 @@ class SingleSignOnController
             return new WP_Error('Token expired');
         }
 
-        $user_email = $data->email;
-        $user = get_user_by('email', $user_email);
+        $user_username = $data->username;
+        $user = get_user_by('login', $user_username);
 
         if (!$user) {
             return new WP_Error('User not found');
