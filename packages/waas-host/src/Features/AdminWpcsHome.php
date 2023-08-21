@@ -132,7 +132,7 @@ class AdminWpcsHome
             </section>
             <section>
                 <h2>Tutorial</h2>
-                <p>You can check out our tutorial on <a href="https://wpcs.io/knowledge-base/create-a-waas-storefront-in-less-than-1-hour-with-simple-wp-plugins/" target="_blank">how to set up your WaaS on WPCS.io here</a>, or you can watch the video below.</p>
+                <p>You can check out our tutorial on <a href="https://wildcloud.so/knowledge-base/create-a-waas-storefront-in-less-than-1-hour-with-simple-wp-plugins/" target="_blank">how to set up your WaaS on WPCS.io here</a>, or you can watch the video below.</p>
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/YZ1igbOMTT4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </section>
         </div>
