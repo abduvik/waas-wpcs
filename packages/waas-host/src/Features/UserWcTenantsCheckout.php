@@ -40,6 +40,7 @@ class UserWcTenantsCheckout
                 'label' => 'Website Name',
                 'required' => true,
                 'priority' => 30,
+                'class' => apply_filters('wpcs_website_name_checkout_field_classes', ['form-row-wide']),
             ];
         }
 
@@ -73,7 +74,7 @@ class UserWcTenantsCheckout
 
         if (count($get_values) > 0) {
             // If there already is a Post with that kind of WPCS_WEBSITE_NAME_META then add a WC Error
-            wc_add_notice(__('Website name is already taken! Please use a different one.'), 'error');
+            wc_add_notice(__('Website name is already taken! Please use a different one.', WPCS_WAAS_HOST_TEXTDOMAIN), 'error');
             return;
         }
 
@@ -83,9 +84,9 @@ class UserWcTenantsCheckout
                 return;
             }
 
-            wc_add_notice(__('Website name is already taken! Please use a different one.'), 'error');
+            wc_add_notice(__('Website name is already taken! Please use a different one.', WPCS_WAAS_HOST_TEXTDOMAIN), 'error');
         } catch(InvalidDomainException $e) {
-            wc_add_notice(__('The resulting domain is not valid.'), 'error');
+            wc_add_notice(__('The resulting domain is not valid.', WPCS_WAAS_HOST_TEXTDOMAIN), 'error');
         }
     }
 
