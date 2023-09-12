@@ -40,6 +40,7 @@ class UserWcTenantsCheckout
                 'label' => 'Website Name',
                 'required' => true,
                 'priority' => 30,
+                'class' => apply_filters('wpcs_website_name_checkout_field_classes', ['form-row-wide']),
             ];
         }
 
