@@ -24,18 +24,8 @@ class HttpService
             'headers' => $this->get_api_header()
         ]);
 
-        if (is_wp_error($response)) {
-            throw new Exception("Failed");
-        } else {
-            $response_code = wp_remote_retrieve_response_code($response);
-
-            if (200 !== $response_code) {
-                throw new Exception("Failed: " . $response_code);
-            } else {
-                // Process the successful response
-                return json_decode($response['body']);
-            }
-        }
+        $this->ensureSuccessStatusCode($response);
+        return json_decode($response['body']);
     }
 
     /**
@@ -46,6 +36,8 @@ class HttpService
         $response = wp_remote_get($this->base_uri . $uri, [
             'headers' => $this->get_api_header()
         ]);
+
+        // Skip ensureSuccessStatusCode and let caller handle
 
         return $response;
     }
@@ -75,18 +67,8 @@ class HttpService
             'body' => json_encode($data)
         ]);
 
-        if (is_wp_error($response)) {
-            throw new Exception("Failed");
-        } else {
-            $response_code = wp_remote_retrieve_response_code($response);
-
-            if (200 !== $response_code) {
-                throw new Exception("Failed: " . $response_code);
-            } else {
-                // Process the successful response
-                return json_decode($response['body']);
-            }
-        }
+        $this->ensureSuccessStatusCode($response);
+        return json_decode($response['body']);
     }
 
     /**
@@ -100,10 +82,7 @@ class HttpService
             'body' => json_encode($data)
         ]);
 
-        if (is_wp_error($response)) {
-            throw new Exception("Failed");
-        }
-
+        $this->ensureSuccessStatusCode($response);
         return json_decode($response['body']);
     }
 
@@ -117,10 +96,22 @@ class HttpService
             'headers' => $this->get_api_header(),
         ]);
 
+        $this->ensureSuccessStatusCode($response);
+        return json_decode($response['body']);
+    }
+
+    private function ensureSuccessStatusCode($response)
+    {
         if (is_wp_error($response)) {
-            throw new Exception("Failed");
+            throw new Exception("Failed: " . $response->get_error_message());
         }
 
-        return json_decode($response['body']);
+        $response_code = wp_remote_retrieve_response_code($response);
+
+        // Only accept truely successfull status codes 
+        if ($response_code < 200 || $response_code > 299) {
+            $response_body = wp_remote_retrieve_body($response);
+            throw new Exception("Failed: " . $response_code . " - " . $response_body);
+        }
     }
 }
