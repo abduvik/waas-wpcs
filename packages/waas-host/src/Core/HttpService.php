@@ -108,7 +108,7 @@ class HttpService
 
         $response_code = wp_remote_retrieve_response_code($response);
 
-        // Only accept truely successfull status codes 
+        // Only accept truly successful status codes 
         if ($response_code < 200 || $response_code > 299) {
             $response_body = wp_remote_retrieve_body($response);
             throw new Exception("Failed: " . $response_code . " - " . $response_body);
