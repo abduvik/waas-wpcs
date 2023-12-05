@@ -64,7 +64,8 @@ class HttpService
         $response = wp_remote_post($this->base_uri . $uri, [
             'method' => 'POST',
             'headers' => $this->get_api_header(),
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'timeout' => 20,
         ]);
 
         $this->ensureSuccessStatusCode($response);
@@ -79,7 +80,8 @@ class HttpService
         $response = wp_remote_post($this->base_uri . $uri, [
             'method' => 'PUT',
             'headers' => $this->get_api_header(),
-            'body' => json_encode($data)
+            'body' => json_encode($data),
+            'timeout' => 20,
         ]);
 
         $this->ensureSuccessStatusCode($response);
@@ -94,6 +96,7 @@ class HttpService
         $response = wp_remote_get($this->base_uri . $uri, [
             'method' => 'DELETE',
             'headers' => $this->get_api_header(),
+            'timeout' => 20,
         ]);
 
         $this->ensureSuccessStatusCode($response);
